@@ -6,6 +6,7 @@ statement comes from. If the documents don't cover a question, it says so instea
 - **Challenge:** C, Purposeful Agentic AI / RAG Workflow
 - **SDG 16:** turning legal text into something a citizen can query
 - **Knowledge base:** Access to Information Act, 2016 (Kenya); see [SOURCES.md](SOURCES.md)
+- **Run it on your computer:** [SETUP.md](SETUP.md)
 - **Bring your own document:** citizens can upload or paste a bylaw, notice or charter (`.txt`), privately, and ask about it
 - **Results:** see [EVALUATION.md](EVALUATION.md)
 
@@ -200,6 +201,8 @@ Frontend/                      React + Vite (no UI libraries)
 ---
 
 ## 8. Running locally
+
+> **New to the project?** Follow the step-by-step guide in **[SETUP.md](SETUP.md)**: installing Node 22, getting a Groq key or Ollama, running, checking and troubleshooting. The summary below is for people who already know the stack.
 
 Requires **Node 22** (`nvm use`; see `.nvmrc`).
 

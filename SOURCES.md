@@ -7,10 +7,10 @@ Nexus answers only from the documents listed here. Original files are kept unmod
 
 | File | Document | Version | Source | Licence / terms |
 |---|---|---|---|---|
-| `Backend/data/raw/bylaw.txt` | **Access to Information Act, 2016 (Kenya)** | Published in Kenya Gazette Vol. CXVIII No. 107 (9 Sept 2016); commenced 21 Sept 2016; revised by the 24th Annual Supplement (Legal Notice 221 of 2023) as at 31 Dec 2022 | **TODO: add the exact URL the text was copied from** | **TODO: confirm**. Kenyan legislation is a public document; record the terms of the site it was taken from |
+| `Backend/data/raw/bylaw.txt` | **Access to Information Act, 2016 (Kenya)**, Act No. 31 of 2016 | Published in Kenya Gazette Vol. CXVIII No. 107 (9 Sept 2016); commenced 21 Sept 2016; point-in-time version **31 Dec 2022** (revised by the 24th Annual Supplement, Legal Notice 221 of 2023) | Kenya Law: <https://kenyalaw.org/akn/ke/act/2016/31/eng@2022-12-31> | Kenyan legislation is a public document. **TODO: confirm the Kenya Law website's terms of use** (the site blocks automated access, so its terms could not be checked from here) |
 
 Metadata used by the app (document id, display title, source URL) is in `Backend/data/sources.json`.
-When the source URL is filled in there, every citation in the app links to it.
+Every citation in the app links to this source URL ("Original ↗").
 
 Format notes: plain text exported from a legal-text website. It contains layout artefacts typical
 of such exports (clause markers such as `(a)` on their own lines, Part headings, a gazette
