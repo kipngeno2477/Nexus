@@ -71,7 +71,7 @@ export default function App() {
   const refreshDocs = useCallback(
     () =>
       listDocuments().then((r) => {
-        if (!r.ok) return
+        if (!r.ok || !r.data || !Array.isArray(r.data.docs)) return
         setDocs(r.data.docs)
         setDocFilter((f) => (f && !f.startsWith('my-') && !r.data.docs.some((d) => d.docId === f) ? '' : f))
       }),
@@ -80,8 +80,8 @@ export default function App() {
   const refreshMyDocs = useCallback(
     () =>
       listMyDocuments().then((r) => {
-        if (!r.ok) return
-        setMySession({ enabled: r.data.enabled, limits: r.data.limits })
+        if (!r.ok || !r.data || !Array.isArray(r.data.docs)) return
+        setMySession({ enabled: r.data.enabled ?? true, limits: r.data.limits ?? null })
         setMyDocs(r.data.docs)
         if (!r.data.active) setSessionId(null)
         setDocFilter((f) => (f.startsWith('my-') && !r.data.docs.some((d) => d.docId === f) ? '' : f))
@@ -189,18 +189,20 @@ export default function App() {
   const hasPipelineResult = result && Array.isArray(result.evidence)
   const showSourcesOnly = result?.status === 'model_unavailable' || citedRefs.size === 0
   const demoFailures = h?.data?.demoFailures
-  const allDocs = [...docs, ...myDocs]
+  const safeDocs = Array.isArray(docs) ? docs : []
+  const safeMyDocs = Array.isArray(myDocs) ? myDocs : []
+  const allDocs = [...safeDocs, ...safeMyDocs]
   const filteredDoc = allDocs.find((d) => d.docId === docFilter)
   const sharedText =
-    docs.length === 1
-      ? docs[0].title
-      : docs.length > 1
-      ? `the ${docs.length} documents in the knowledge base`
+    safeDocs.length === 1
+      ? safeDocs[0].title
+      : safeDocs.length > 1
+      ? `the ${safeDocs.length} documents in the knowledge base`
       : 'the documents in the knowledge base'
   const scopeText = filteredDoc
     ? `“${filteredDoc.title}”${filteredDoc.private ? ' (your document)' : ''}`
-    : myDocs.length
-    ? `${sharedText} and your ${myDocs.length === 1 ? 'document' : `${myDocs.length} documents`}`
+    : safeMyDocs.length
+    ? `${sharedText} and your ${safeMyDocs.length === 1 ? 'document' : `${safeMyDocs.length} documents`}`
     : sharedText
 
   return (
