@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import {  notFound } from "./middleware/errorMiddleware.js";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
 
@@ -13,6 +13,7 @@ app.use(express.json());
 
 
 app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
