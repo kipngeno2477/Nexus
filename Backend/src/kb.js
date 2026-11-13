@@ -44,6 +44,7 @@ export const SYNONYMS = {
   days: ["day", "period", "time"],
   long: ["period", "days", "time"],
   whistleblower: ["disclosure", "protection"],
+  whistle: ["disclosure", "protection"],
   punishment: ["penalty", "offence", "fine", "imprisonment"],
   penalty: ["offence", "fine", "imprisonment"],
   jail: ["imprisonment"],

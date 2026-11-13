@@ -243,3 +243,14 @@ test("number found in another passage completes the citation instead of flagging
   assert.equal(r.answer[0].lowOverlap, false);
   assert.ok(r.warnings.some((w) => w.code === "citation_completed"));
 });
+
+test("missing verdict is inferred from content instead of discarding the answer", async () => {
+  const r1 = await run({ question: "trading licence", k: 1 }, mockLlm({ claims: [{ text: "A trading licence is required.", evidence: ["E1"] }], missing: "", conflicts: [] }));
+  assert.equal(r1.status, "answered");
+  assert.equal(r1.debug.llm.repairs, 0);
+  assert.ok(r1.warnings.some((w) => w.code === "verdict_inferred"));
+  const r2 = await run({ question: "trading licence fee", k: 3 }, mockLlm({ claims: [], missing: "", conflicts: [{ description: "500 vs 1000", evidence: ["E1", "E2"] }] }));
+  assert.equal(r2.status, "conflicting_evidence");
+  const r3 = await run({ question: "trading licence", k: 1 }, mockLlm({ verdict: "maybe", claims: [] }, { verdict: "maybe", claims: [] }));
+  assert.equal(r3.status, "model_unavailable", "an unknown verdict value is still a format error");
+});

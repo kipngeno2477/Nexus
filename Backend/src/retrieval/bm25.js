@@ -5,7 +5,7 @@ const STOPWORDS = new Set(
   ("a an and are as at be by can do does for from has have how i if in into is it its may me my " +
     "no not of on or our shall should so such that the their them then there these they this to " +
     "under upon was we what when where which who will with within without would you your " +
-    "am much many get need want know tell please any about also someone something able allowed").split(" ")
+    "am much many get need want know tell please any about also someone something able allowed being").split(" ")
 );
 
 // Light suffix stripping so "protected"/"protection" and "destroys"/"destroying" meet.

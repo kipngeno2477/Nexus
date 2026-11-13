@@ -28,6 +28,9 @@ before(async () => {
           if (j.response_format.type === "json_schema") return reply(400, { error: { message: "response_format json_schema is not supported" } });
           return ok();
         case "bad-request": return reply(400, { error: { message: "messages: too long" } });
+        case "groq-validate":
+          if (j.response_format.type === "json_schema") return reply(400, { error: { message: "Failed to generate JSON. Please adjust your prompt.", code: "json_validate_failed", failed_generation: "{bad" } });
+          return ok();
         case "slow": return setTimeout(ok, 500);
         default: return reply(500, { error: { message: "boom" } });
       }
@@ -100,4 +103,11 @@ test("unreachable endpoint is a retryable 'unavailable' error", async () => {
 
 test("missing model is not_configured", async () => {
   await assert.rejects(client({ model: "" }).chat(MSG), (e) => e.kind === "not_configured");
+});
+
+test("Groq json_validate_failed downgrades once to json_object", async () => {
+  requests.length = 0;
+  const out = await client({ model: "groq-validate" }).chat(MSG, { schema: { type: "object" } });
+  assert.equal(out.model, "groq-validate");
+  assert.deepEqual(requests.map((r) => r.response_format.type), ["json_schema", "json_object"]);
 });

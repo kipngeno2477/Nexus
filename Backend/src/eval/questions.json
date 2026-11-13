@@ -1,0 +1,39 @@
+{
+  "description": "Evaluation set for the Access to Information Act, 2016 (Kenya) knowledge base. Expected sections and facts were checked against data/raw/bylaw.txt. Facts are case-insensitive regular expressions that must appear in the generated answer; forbid patterns must not appear.",
+  "fields": {
+    "expectSections": "retrieval target: at least one must be among the selected passages",
+    "acceptableSections": "citations to these sections count as precise (relevant) citations",
+    "expectStatus": "answered | insufficient_evidence | either",
+    "facts": "each entry is a regex the answer text must match",
+    "forbid": "regexes that must NOT appear in the answer (fabrication traps)"
+  },
+  "questions": [
+    { "id": "q01", "category": "direct", "question": "How much does it cost to apply for information?", "expectSections": ["s12"], "acceptableSections": ["s12", "s11", "s14", "s28"], "expectStatus": "answered", "facts": ["no fee"] },
+    { "id": "q02", "category": "direct", "question": "How long does a public officer have to decide on my application?", "expectSections": ["s9"], "acceptableSections": ["s9", "s10", "s11", "s14"], "expectStatus": "answered", "facts": ["twenty-one days|21 days"] },
+    { "id": "q03", "category": "direct", "question": "What happens if I get no response to my request within the time limit?", "expectSections": ["s9"], "acceptableSections": ["s9", "s14", "s11"], "expectStatus": "answered", "facts": ["deemed.{0,30}reject"] },
+    { "id": "q04", "category": "direct", "question": "In what languages can I make an application for information?", "expectSections": ["s8"], "acceptableSections": ["s8"], "expectStatus": "answered", "facts": ["english", "kiswahili"] },
+    { "id": "q05", "category": "direct", "question": "What if I cannot write my request because of illiteracy or disability?", "expectSections": ["s8"], "acceptableSections": ["s8", "s11", "s28"], "expectStatus": "answered", "facts": ["necessary steps|meets (their|his|her|the applicant's) needs"] },
+    { "id": "q06", "category": "direct", "question": "Who is the information access officer in a public entity?", "expectSections": ["s7"], "acceptableSections": ["s7", "s2"], "expectStatus": "answered", "facts": ["chief executive officer"] },
+    { "id": "q07", "category": "direct", "question": "Can my application be transferred to another public entity, and how quickly?", "expectSections": ["s10"], "acceptableSections": ["s10", "s9"], "expectStatus": "answered", "facts": ["five days|5 days"] },
+    { "id": "q08", "category": "direct", "question": "Within how many days must I apply to the Commission to review a decision?", "expectSections": ["s14"], "acceptableSections": ["s14"], "expectStatus": "answered", "facts": ["thirty days|30 days"] },
+    { "id": "q09", "category": "direct", "question": "Can I ask a public body to correct my out-of-date personal information?", "expectSections": ["s13"], "acceptableSections": ["s13", "s14", "s2"], "expectStatus": "answered", "facts": ["correct|update|annotate"] },
+    { "id": "q10", "category": "direct", "question": "What is the penalty for destroying records to prevent disclosure?", "expectSections": ["s18"], "acceptableSections": ["s18", "s28"], "expectStatus": "answered", "facts": ["five hundred thousand", "one year"] },
+    { "id": "q11", "category": "direct", "question": "What is the penalty for knowingly disclosing exempt information?", "expectSections": ["s28"], "acceptableSections": ["s28", "s6", "s18", "s2"], "expectStatus": "answered", "facts": ["one million", "three years"] },
+    { "id": "q12", "category": "direct", "question": "How do I lodge a complaint with the Commission?", "expectSections": ["s22"], "acceptableSections": ["s22", "s14", "s21"], "expectStatus": "answered", "facts": ["oral|orally"] },
+    { "id": "q13", "category": "direct", "question": "Do I have to give a reason for requesting information?", "expectSections": ["s4"], "acceptableSections": ["s4"], "expectStatus": "answered", "facts": ["not affected|any reason|no reason|not required"] },
+    { "id": "q14", "category": "direct", "question": "By when must public entities submit their yearly report to the Commission?", "expectSections": ["s27"], "acceptableSections": ["s27", "s26"], "expectStatus": "answered", "facts": ["30th (day of )?june|30 june|june 30"] },
+    { "id": "q15", "category": "direct", "question": "Who does the Commission submit its annual report to?", "expectSections": ["s26"], "acceptableSections": ["s26"], "expectStatus": "answered", "facts": ["parliament"] },
+    { "id": "q16", "category": "paraphrase", "question": "Am I protected from being fired if I blow the whistle on corruption?", "expectSections": ["s16"], "acceptableSections": ["s16", "s3"], "expectStatus": "answered", "facts": ["penali[sz]ed|employment"] },
+    { "id": "q17", "category": "paraphrase", "question": "What kinds of information can the government refuse to release?", "expectSections": ["s6"], "acceptableSections": ["s6", "s2", "s4"], "expectStatus": "answered", "facts": ["national security"] },
+    { "id": "q18", "category": "paraphrase", "question": "Can a public body be sued for defamatory content in information it gives me?", "expectSections": ["s19"], "acceptableSections": ["s19"], "expectStatus": "answered", "facts": ["privileged|malice"] },
+    { "id": "q19", "category": "condition", "question": "How quickly must information be provided if someone's life or liberty is at stake?", "expectSections": ["s9"], "acceptableSections": ["s9"], "expectStatus": "answered", "facts": ["forty-eight hours|48 hours"] },
+    { "id": "q20", "category": "definition", "question": "Who counts as a citizen under the Act?", "expectSections": ["s2"], "acceptableSections": ["s2", "s4"], "expectStatus": "answered", "facts": ["kenyan citizenship"] },
+    { "id": "q21", "category": "fabrication-trap", "question": "What is the exact fee in shillings for photocopies of information?", "expectSections": ["s12"], "acceptableSections": ["s12", "s11", "s28"], "expectStatus": "either", "facts": [], "forbid": ["\\b\\d[\\d,]*\\s*(shillings|ksh|kes)\\b", "(ten|twenty|fifty|one|two|five) (hundred )?(thousand )?shillings per (page|copy)"] },
+    { "id": "q22", "category": "noisy", "question": "how mch does it cst to get info frm govt??", "expectSections": ["s12"], "acceptableSections": ["s12", "s11"], "expectStatus": "either", "facts": [] },
+    { "id": "q23", "category": "unanswerable", "question": "What is the speed limit on Kenyan highways?", "expectSections": [], "acceptableSections": [], "expectStatus": "insufficient_evidence", "facts": [] },
+    { "id": "q24", "category": "unanswerable", "question": "How do I apply for a Kenyan passport?", "expectSections": [], "acceptableSections": [], "expectStatus": "insufficient_evidence", "facts": [] },
+    { "id": "q25", "category": "unanswerable", "question": "When are county elections held?", "expectSections": [], "acceptableSections": [], "expectStatus": "insufficient_evidence", "facts": [] },
+    { "id": "q26", "category": "unanswerable-near-domain", "question": "What is the fine for littering in Nairobi?", "expectSections": [], "acceptableSections": [], "expectStatus": "insufficient_evidence", "facts": [] },
+    { "id": "q27", "category": "unanswerable-near-domain", "question": "How many commissioners sit on the Commission and what are their salaries?", "expectSections": [], "acceptableSections": [], "expectStatus": "insufficient_evidence", "facts": [], "forbid": ["\\b\\d[\\d,]*\\s*(shillings|ksh|kes)\\b"] }
+  ]
+}

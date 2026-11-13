@@ -32,10 +32,17 @@ export function parseModelOutput(content) {
     }
   }
   if (!obj || typeof obj !== "object") throw new OutputFormatError("not an object");
-  if (!VERDICTS.includes(obj.verdict)) throw new OutputFormatError(`unknown verdict ${JSON.stringify(obj.verdict)}`);
   if (!Array.isArray(obj.claims ?? [])) throw new OutputFormatError("claims is not an array");
+  let verdict = obj.verdict;
+  let verdictInferred = false;
+  if (verdict == null) {
+    // Some models omit the field while the rest is fine: infer it from the content.
+    verdict = Array.isArray(obj.conflicts) && obj.conflicts.length ? "conflicting_evidence" : (obj.claims ?? []).length ? "answered" : "insufficient_evidence";
+    verdictInferred = true;
+  } else if (!VERDICTS.includes(verdict)) throw new OutputFormatError(`unknown verdict ${JSON.stringify(verdict)}`);
   return {
-    verdict: obj.verdict,
+    verdict,
+    verdictInferred,
     claims: (obj.claims ?? []).filter((c) => c && typeof c.text === "string" && c.text.trim()),
     missing: typeof obj.missing === "string" ? obj.missing.trim() : "",
     conflicts: Array.isArray(obj.conflicts) ? obj.conflicts.filter((c) => c && typeof c.description === "string") : [],
@@ -136,5 +143,6 @@ export function verifyCitations(parsed, chunks) {
     warnings.push({ code: "partial_answer", detail: "Evidence covers only part of the question." });
   }
 
+  if (parsed.verdictInferred) warnings.push({ code: "verdict_inferred", detail: `Model omitted the verdict; inferred "${parsed.verdict}" from its content.` });
   return { verdict, claims, unsupported, conflicts, missing: parsed.missing, warnings };
 }

@@ -9,7 +9,8 @@
     "test": "node --test test/",
     "ingest": "node src/ingest/ingest.js",
     "bench": "node src/eval/benchmark.js",
-    "ask": "node src/eval/ask-cli.js"
+    "ask": "node src/eval/ask-cli.js",
+    "eval": "node src/eval/runEval.js"
   },
   "keywords": [],
   "author": "",

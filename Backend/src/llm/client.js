@@ -132,9 +132,10 @@ export function createLlmClient(config = llmConfigFromEnv()) {
           schema ? { type: "json_schema", json_schema: { name: "answer", schema, strict: false } } : { type: "json_object" }
         );
       } catch (e) {
-        // Model without structured-output support: downgrade once to plain JSON mode
-        // (the prompt already spells out the JSON shape; verify.js validates it).
-        if (!(schema && e.status === 400 && /response_format|json_schema/i.test(e.message))) throw e;
+        // Model without structured-output support, or the provider rejected output that broke the
+        // schema (Groq: 400 json_validate_failed): downgrade once to plain JSON mode. The prompt
+        // spells out the JSON shape and verify.js validates it.
+        if (!(schema && e.status === 400 && /response_format|json_schema|json_validate_failed|failed to generate json/i.test(e.message))) throw e;
         data = await call({ type: "json_object" });
       }
       const content = data.choices?.[0]?.message?.content;

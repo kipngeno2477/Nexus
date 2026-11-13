@@ -8,7 +8,7 @@ import { RateLimiter, AnswerCache } from "../src/askGuard.js";
 const limiter = new RateLimiter({ limit: Number(process.env.ASK_RATE_LIMIT) || 10, windowMs: 60_000 });
 const cache = new AnswerCache({ ttlMs: Number(process.env.ANSWER_CACHE_TTL_MS) || 15 * 60_000 });
 
-const MIN_SCORE = Number(process.env.RETRIEVAL_MIN_SCORE ?? 1);
+const MIN_SCORE = Number(process.env.RETRIEVAL_MIN_SCORE ?? 0);
 const MIN_COVERAGE = Number(process.env.RETRIEVAL_MIN_COVERAGE ?? 0.6);
 const DEMO_FAILURES = process.env.DEMO_FAILURES === "true";
 

@@ -1,0 +1,1227 @@
+{
+  "meta": {
+    "at": "2026-11-13T06:53:08.010Z",
+    "chunks": 53,
+    "docs": 1,
+    "k": 4,
+    "model": "qwen/qwen3.8-27b",
+    "fallback": "openai/gpt-oss-20b",
+    "questions": 27
+  },
+  "retrieval": {
+    "rows": [
+      {
+        "id": "q01",
+        "candidates": 50,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q02",
+        "candidates": 46,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q03",
+        "candidates": 36,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q04",
+        "candidates": 50,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q05",
+        "candidates": 30,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q06",
+        "candidates": 51,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q07",
+        "candidates": 43,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q08",
+        "candidates": 43,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q09",
+        "candidates": 51,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q10",
+        "candidates": 27,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q11",
+        "candidates": 50,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q12",
+        "candidates": 26,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q13",
+        "candidates": 51,
+        "firstRank": 2,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q14",
+        "candidates": 49,
+        "firstRank": 2,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q15",
+        "candidates": 26,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q16",
+        "candidates": 46,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q17",
+        "candidates": 51,
+        "firstRank": 6,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q18",
+        "candidates": 52,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q19",
+        "candidates": 49,
+        "firstRank": 1,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q20",
+        "candidates": 30,
+        "firstRank": 2,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q21",
+        "candidates": 49,
+        "firstRank": 3,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q22",
+        "candidates": 0,
+        "firstRank": null,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q23",
+        "candidates": 9,
+        "firstRank": null,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q24",
+        "candidates": 25,
+        "firstRank": null,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q25",
+        "candidates": 15,
+        "firstRank": null,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q26",
+        "candidates": 6,
+        "firstRank": null,
+        "heapEqualsSort": true
+      },
+      {
+        "id": "q27",
+        "candidates": 27,
+        "firstRank": null,
+        "heapEqualsSort": true
+      }
+    ],
+    "recallAt": {
+      "1": 0.7272727272727273,
+      "2": 0.8636363636363636,
+      "3": 0.9090909090909091,
+      "4": 0.9090909090909091,
+      "5": 0.9090909090909091,
+      "8": 0.9545454545454546
+    },
+    "mrr": 0.818181818181818,
+    "heapMismatches": 0,
+    "answerable": 22
+  },
+  "summary": {
+    "questions": 27,
+    "answeredWhenAnswerable": 0.95,
+    "abstainedWhenUnanswerable": 1,
+    "statusAccuracy": 0.9629629629629629,
+    "retrievalHit": 0.9090909090909091,
+    "retrievalHitHeapOnly": 0.9090909090909091,
+    "factRecall": 1,
+    "citationPrecision": 0.9625,
+    "claims": 77,
+    "unsupportedRemoved": 0,
+    "flaggedClaims": 0,
+    "inventedCitationsRemoved": 0,
+    "forbiddenViolations": [],
+    "gatedWithoutModel": 4,
+    "fallbackAnswers": 0,
+    "repairs": 0,
+    "llmMsP50": 926,
+    "llmMsP95": 1369,
+    "tokens": 37392
+  },
+  "pipeline": [
+    {
+      "id": "q01",
+      "category": "direct",
+      "question": "How much does it cost to apply for information?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "no fee",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 3,
+      "citationPrecision": 1,
+      "claims": 8,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1255,
+      "totalMs": 1269,
+      "tokens": 1744,
+      "answerText": "No fee may be levied in relation to the submission of an application. [1] A public entity or private body may charge a prescribed fee for the provision of the information. [1] The fee for the provision of information shall not exceed the actual costs of making copies of such information and, if applicable, supplying them to the applicant. [1] The Cabinet Secretary shall make regulations prescribing the fees payable for expenses incurred in providing information to an applicant. [1] The applicant is advised of the details of any fees or further fees to be paid for access, together with the calculations made to arrive at the amount of the fee. [2] The applicant is advised of the method of payment of such fees, if any. [2] An appeal may be made to the Commission in respect of the amount of fees required. [2] An applicant may apply to the Commission for a review of a decision relating to the imposition of a fee or the amount of the fee. [3]",
+      "message": null
+    },
+    {
+      "id": "q02",
+      "category": "direct",
+      "question": "How long does a public officer have to decide on my application?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "twenty-one days|21 days",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 3,
+      "citationPrecision": 1,
+      "claims": 5,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1369,
+      "totalMs": 1389,
+      "tokens": 1850,
+      "answerText": "A public officer must make a decision on an application within twenty-one days of receipt of the application. [1] If the information sought concerns the life or liberty of a person, the information officer must provide the information within forty-eight hours of receipt of the application. [1] For requests concerning life or liberty, the information officer may extend the response period on a single occasion for not more than fourteen days if the request involves a large amount of information or requires necessary consultations that cannot be completed within the stipulated time. [1] If an application is transferred to another public entity, that entity must make a decision within twenty-one days from the date the application was first made. [3] If the applicant does not receive a response within the twenty-one-day period, the application is deemed to have been rejected. [2][1]",
+      "message": null
+    },
+    {
+      "id": "q03",
+      "category": "direct",
+      "question": "What happens if I get no response to my request within the time limit?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "deemed.{0,30}reject",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 4,
+      "citationPrecision": 0.75,
+      "claims": 7,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1004,
+      "totalMs": 1016,
+      "tokens": 1800,
+      "answerText": "If an applicant does not receive a response to an application within the period stated in subsection (1), the application shall be deemed to have been rejected. [2] The standard period for a public officer to make a decision on an application is within twenty-one days of receipt of the application. [1] If the information sought concerns the life or liberty of a person, the information officer must provide the information within forty-eight hours of receipt. [1] For requests concerning life or liberty, the response period may be extended on a single occasion for not more than fourteen days if the request involves a large amount of information or requires necessary consultations. [1] If an application is transferred to another public entity, that entity must make a decision within twenty-one days from the date the application was first made. [3] If a request is declined, the decision must include a statement about how the requester may appeal to the Commission. [2] An applicant may apply in writing to the Commission for a review of a decision refusing access within thirty days from the day the decision is notified. [4]",
+      "message": null
+    },
+    {
+      "id": "q04",
+      "category": "direct",
+      "question": "In what languages can I make an application for information?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "english",
+          "found": true
+        },
+        {
+          "fact": "kiswahili",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 1,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 812,
+      "totalMs": 819,
+      "tokens": 1386,
+      "answerText": "An application to access information must be made in writing in English or Kiswahili. [1]",
+      "message": null
+    },
+    {
+      "id": "q05",
+      "category": "direct",
+      "question": "What if I cannot write my request because of illiteracy or disability?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "necessary steps|meets (their|his|her|the applicant's) needs",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 2,
+      "citationPrecision": 1,
+      "claims": 5,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1425,
+      "totalMs": 1434,
+      "tokens": 1723,
+      "answerText": "If you are unable to make a written request due to illiteracy or disability, the information officer must take the necessary steps to ensure you can make the request in a manner that meets your needs. [1] The information officer must reduce your request to writing using a prescribed form. [1] The information officer must provide you with a copy of the written request. [1] An information access officer commits an offence if they refuse to assist a requester who is unable to write by reducing the oral request to writing in the prescribed form and providing a copy. [3] An information access officer who commits this offence is liable, on conviction, to a fine not exceeding fifty thousand shillings, or to imprisonment for a term not exceeding three months, or both. [3]",
+      "message": null
+    },
+    {
+      "id": "q06",
+      "category": "direct",
+      "question": "Who is the information access officer in a public entity?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "chief executive officer",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 2,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 525,
+      "totalMs": 530,
+      "tokens": 1335,
+      "answerText": "The chief executive officer of a public entity is the information access officer. [1] The chief executive officer may delegate the performance of their duties as an information access officer to any officer of the public entity. [1]",
+      "message": null
+    },
+    {
+      "id": "q07",
+      "category": "direct",
+      "question": "Can my application be transferred to another public entity, and how quickly?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "five days|5 days",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 5,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 790,
+      "totalMs": 796,
+      "tokens": 1645,
+      "answerText": "An information access officer may transfer an application or any relevant part of it to another public entity if the requested information is held by that other entity. [1] The transfer must occur no later than five days from the date of receipt of the application. [1] The information access officer must inform the applicant about the transfer immediately, but in any event no later than seven days from the date of receipt of the application. [1] The public entity to which the application is referred must make a decision on the application within twenty-one days from the date the application was first made. [1] These provisions apply with necessary modification to applications made to private bodies to which the Act applies. [1]",
+      "message": null
+    },
+    {
+      "id": "q08",
+      "category": "direct",
+      "question": "Within how many days must I apply to the Commission to review a decision?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "thirty days|30 days",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 2,
+      "citationPrecision": 1,
+      "claims": 2,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1170,
+      "totalMs": 1178,
+      "tokens": 1521,
+      "answerText": "An application to the Commission for a review of a decision must be made within thirty days from the day on which the decision is notified to the applicant. [1][2] The Commission may allow a further period beyond the thirty-day limit for submitting the review application. [1][2]",
+      "message": null
+    },
+    {
+      "id": "q09",
+      "category": "direct",
+      "question": "Can I ask a public body to correct my out-of-date personal information?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "correct|update|annotate",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 2,
+      "citationPrecision": 0.5,
+      "claims": 8,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1040,
+      "totalMs": 1049,
+      "tokens": 1758,
+      "answerText": "A public entity must correct, update, or annotate personal information held by it that is out of date, inaccurate, or incomplete upon the request of the applicant. [1] The public entity must perform the correction, update, or annotation at its own expense. [1] The public entity must perform the correction, update, or annotation within a reasonable time. [1] The request to correct the information must be made in writing to the public entity responsible for maintaining the record system containing the information. [1] The written request must state that it is a request to amend certain personal information relating to the applicant. [1] The written request must specify the personal information to be amended and indicate how it is out of date, inaccurate, or incomplete. [1] The written request must specify the remedy sought by the applicant. [1] If a public entity fails to respond to a request to correct personal information, it commits an offence. [2]",
+      "message": null
+    },
+    {
+      "id": "q10",
+      "category": "direct",
+      "question": "What is the penalty for destroying records to prevent disclosure?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "five hundred thousand",
+          "found": true
+        },
+        {
+          "fact": "one year",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 2,
+      "citationPrecision": 1,
+      "claims": 3,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1043,
+      "totalMs": 1051,
+      "tokens": 1768,
+      "answerText": "A person who destroys a record held by a public entity with the intention of preventing the disclosure of information to an applicant commits an offence. [1] The penalty for this offence is a fine not exceeding five hundred thousand shillings, or imprisonment for a term not exceeding one year, or both. [1] If the destruction of the record occurs after a request for disclosure has been made, with the intention of preventing disclosure in response to that request, the penalty is a fine not exceeding five hundred thousand shillings, or imprisonment for a term not exceeding two years, or both. [3]",
+      "message": null
+    },
+    {
+      "id": "q11",
+      "category": "direct",
+      "question": "What is the penalty for knowingly disclosing exempt information?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 1,
+      "facts": [
+        {
+          "fact": "one million",
+          "found": true
+        },
+        {
+          "fact": "three years",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 5,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1004,
+      "totalMs": 1015,
+      "tokens": 2086,
+      "answerText": "A person who knowingly discloses exempt information in contravention of the Act commits an offence. [1] The penalty for this offence is a fine not exceeding one million shillings. [1] The penalty for this offence is imprisonment for a term not exceeding three years. [1] The penalty for this offence may be both a fine and imprisonment. [1] It is a defence to the charge if the exempt information disclosed was already in the public domain at the time of disclosure. [1]",
+      "message": null
+    },
+    {
+      "id": "q12",
+      "category": "direct",
+      "question": "How do I lodge a complaint with the Commission?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "oral|orally",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 2,
+      "citationPrecision": 1,
+      "claims": 4,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 728,
+      "totalMs": 738,
+      "tokens": 1382,
+      "answerText": "A person wishing to lodge a complaint must do so orally or in writing. [1] The complaint must be submitted to the secretary or such other person as may be duly authorized by the Commission for that purpose. [1] The complaint must be in such form and contain such particulars as the Commission may, from time to time, prescribe. [1] The procedure for submitting a request for a review by the Commission is the same as the procedure for lodging complaints with the Commission stipulated under section 22 of this Act or as prescribed by the Commission. [3]",
+      "message": null
+    },
+    {
+      "id": "q13",
+      "category": "direct",
+      "question": "Do I have to give a reason for requesting information?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "not affected|any reason|no reason|not required",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 2,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 627,
+      "totalMs": 633,
+      "tokens": 1544,
+      "answerText": "A citizen's right to access information is not affected by any reason the person gives for seeking access. [2] A citizen's right to access information is not affected by the public entity's belief as to what the person's reasons are for seeking access. [2]",
+      "message": null
+    },
+    {
+      "id": "q14",
+      "category": "direct",
+      "question": "By when must public entities submit their yearly report to the Commission?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "30th (day of )?june|30 june|june 30",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 1,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 534,
+      "totalMs": 539,
+      "tokens": 1413,
+      "answerText": "Public entities must submit their yearly report to the Commission on or before the 30th day of June of each year. [2]",
+      "message": null
+    },
+    {
+      "id": "q15",
+      "category": "direct",
+      "question": "Who does the Commission submit its annual report to?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "parliament",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 1,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 631,
+      "totalMs": 633,
+      "tokens": 1394,
+      "answerText": "The Commission submits its annual report to Parliament. [1]",
+      "message": null
+    },
+    {
+      "id": "q16",
+      "category": "paraphrase",
+      "question": "Am I protected from being fired if I blow the whistle on corruption?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "penali[sz]ed|employment",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 3,
+      "citationPrecision": 1,
+      "claims": 8,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1146,
+      "totalMs": 1151,
+      "tokens": 1923,
+      "answerText": "You are protected from being penalized in relation to your employment if you make a disclosure of information obtained in confidence in the course of that activity, provided the disclosure is of public interest. [1] A disclosure is deemed to be made in the public interest if it is made to a law enforcement agency or to an appropriate public entity. [1] You must have a reasonable belief in the veracity of the information to make a disclosure under the protection provisions. [1] The protected disclosures include information on corruption. [1] Being penalized includes being dismissed, discriminated against, made the subject of reprisal, or denied any appointment, promotion, or advantage that would otherwise have been provided. [2] The imposition of any such penalty in contravention of the section is actionable as a tort. [2] Providing false information maliciously intended to injure another person is an offence punishable by a fine not exceeding five hundred thousand shillings, imprisonment for a term not exceeding three years, or both. [1] In proceedings for an offence regarding the disclosure of information, it is a defence to show that the disclosure was in the public interest and, if the offender is a public officer or Government contractor, that they complied with the requirement of having a reasonable belief in the veracity of the information before disclosing. [3]",
+      "message": null
+    },
+    {
+      "id": "q17",
+      "category": "paraphrase",
+      "question": "What kinds of information can the government refuse to release?",
+      "status": "insufficient_evidence",
+      "expectStatus": "answered",
+      "statusOk": false,
+      "retrievalHit": false,
+      "retrievalHitHeapOnly": false,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "national security",
+          "found": false
+        }
+      ],
+      "factRecall": 0,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 527,
+      "totalMs": 530,
+      "tokens": 1493,
+      "answerText": "",
+      "message": "The provided evidence does not list the specific categories or kinds of information that the government can refuse to release. It only mentions that a request may be declined if the information is 'exempt' (E1) and allows for appeals regarding such decisions (E1, E4), but it does not define what constitutes exempt information."
+    },
+    {
+      "id": "q18",
+      "category": "paraphrase",
+      "question": "Can a public body be sued for defamatory content in information it gives me?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "privileged|malice",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 2,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 584,
+      "totalMs": 587,
+      "tokens": 1523,
+      "answerText": "If a public entity provides information to an applicant that was supplied to it by a third person, the publication of any defamatory matter contained in that information is privileged. [1] The privilege for publishing defamatory matter in information supplied by a third person does not apply if the publication is shown to have been made with malice. [1]",
+      "message": null
+    },
+    {
+      "id": "q19",
+      "category": "condition",
+      "question": "How quickly must information be provided if someone's life or liberty is at stake?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 0,
+      "facts": [
+        {
+          "fact": "forty-eight hours|48 hours",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 3,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1290,
+      "totalMs": 1293,
+      "tokens": 1744,
+      "answerText": "If the information sought concerns the life or liberty of a person, the information officer must provide the information within forty-eight hours of receiving the application. [1] The information officer may extend this forty-eight-hour period on a single occasion for up to fourteen days if the request involves a large amount of information or requires a search through a large amount of information, and meeting the original time would unreasonably interfere with the information holder's activities. [1] The information officer may also extend the period on a single occasion for up to fourteen days if consultations are necessary to comply with the request and cannot be reasonably completed within the original forty-eight-hour timeframe. [1]",
+      "message": null
+    },
+    {
+      "id": "q20",
+      "category": "definition",
+      "question": "Who counts as a citizen under the Act?",
+      "status": "answered",
+      "expectStatus": "answered",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 1,
+      "facts": [
+        {
+          "fact": "kenyan citizenship",
+          "found": true
+        }
+      ],
+      "factRecall": 1,
+      "forbidden": [],
+      "citations": 1,
+      "citationPrecision": 1,
+      "claims": 2,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 838,
+      "totalMs": 845,
+      "tokens": 1620,
+      "answerText": "A citizen is defined as any individual who has Kenyan citizenship. [2] A citizen also includes any private entity that is controlled by one or more Kenyan citizens. [2]",
+      "message": null
+    },
+    {
+      "id": "q21",
+      "category": "fabrication-trap",
+      "question": "What is the exact fee in shillings for photocopies of information?",
+      "status": "answered",
+      "expectStatus": "either",
+      "statusOk": true,
+      "retrievalHit": true,
+      "retrievalHitHeapOnly": true,
+      "crossRefs": 1,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 2,
+      "citationPrecision": 1,
+      "claims": 3,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 1031,
+      "totalMs": 1036,
+      "tokens": 1827,
+      "answerText": "A public entity or private body may charge a prescribed fee for the provision of information, but the fee shall not exceed the actual costs of making copies of such information and, if applicable, supplying them to the applicant. [3] The Cabinet Secretary shall make regulations prescribing the fees payable for expenses incurred in providing information to an applicant. [3] Charging a fee exceeding the actual costs of making copies of information and supplying them to the applicant is an offence. [1]",
+      "message": null
+    },
+    {
+      "id": "q22",
+      "category": "noisy",
+      "question": "how mch does it cst to get info frm govt??",
+      "status": "insufficient_evidence",
+      "expectStatus": "either",
+      "statusOk": true,
+      "retrievalHit": false,
+      "retrievalHitHeapOnly": false,
+      "crossRefs": 0,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": null,
+      "fallback": false,
+      "llmCalls": 0,
+      "repairs": 0,
+      "llmMs": null,
+      "totalMs": 1,
+      "tokens": null,
+      "answerText": "",
+      "message": "No passage in the knowledge base matches this question."
+    },
+    {
+      "id": "q23",
+      "category": "unanswerable",
+      "question": "What is the speed limit on Kenyan highways?",
+      "status": "insufficient_evidence",
+      "expectStatus": "insufficient_evidence",
+      "statusOk": true,
+      "retrievalHit": null,
+      "retrievalHitHeapOnly": null,
+      "crossRefs": 0,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": null,
+      "fallback": false,
+      "llmCalls": 0,
+      "repairs": 0,
+      "llmMs": null,
+      "totalMs": 4,
+      "tokens": null,
+      "answerText": "",
+      "message": "The closest passages are only weakly related to this question."
+    },
+    {
+      "id": "q24",
+      "category": "unanswerable",
+      "question": "How do I apply for a Kenyan passport?",
+      "status": "insufficient_evidence",
+      "expectStatus": "insufficient_evidence",
+      "statusOk": true,
+      "retrievalHit": null,
+      "retrievalHitHeapOnly": null,
+      "crossRefs": 0,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": null,
+      "fallback": false,
+      "llmCalls": 0,
+      "repairs": 0,
+      "llmMs": null,
+      "totalMs": 2,
+      "tokens": null,
+      "answerText": "",
+      "message": "The closest passages are only weakly related to this question."
+    },
+    {
+      "id": "q25",
+      "category": "unanswerable",
+      "question": "When are county elections held?",
+      "status": "insufficient_evidence",
+      "expectStatus": "insufficient_evidence",
+      "statusOk": true,
+      "retrievalHit": null,
+      "retrievalHitHeapOnly": null,
+      "crossRefs": 0,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 926,
+      "totalMs": 928,
+      "tokens": 1517,
+      "answerText": "",
+      "message": "The provided evidence does not contain information about when county elections are held."
+    },
+    {
+      "id": "q26",
+      "category": "unanswerable-near-domain",
+      "question": "What is the fine for littering in Nairobi?",
+      "status": "insufficient_evidence",
+      "expectStatus": "insufficient_evidence",
+      "statusOk": true,
+      "retrievalHit": null,
+      "retrievalHitHeapOnly": null,
+      "crossRefs": 1,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": null,
+      "fallback": false,
+      "llmCalls": 0,
+      "repairs": 0,
+      "llmMs": null,
+      "totalMs": 3,
+      "tokens": null,
+      "answerText": "",
+      "message": "The closest passages are only weakly related to this question."
+    },
+    {
+      "id": "q27",
+      "category": "unanswerable-near-domain",
+      "question": "How many commissioners sit on the Commission and what are their salaries?",
+      "status": "insufficient_evidence",
+      "expectStatus": "insufficient_evidence",
+      "statusOk": true,
+      "retrievalHit": null,
+      "retrievalHitHeapOnly": null,
+      "crossRefs": 0,
+      "facts": [],
+      "factRecall": null,
+      "forbidden": [],
+      "citations": 0,
+      "citationPrecision": null,
+      "claims": 0,
+      "unsupportedRemoved": 0,
+      "flaggedClaims": 0,
+      "inventedCitationsRemoved": 0,
+      "model": "qwen/qwen3.8-27b",
+      "fallback": false,
+      "llmCalls": 1,
+      "repairs": 0,
+      "llmMs": 631,
+      "totalMs": 634,
+      "tokens": 1396,
+      "answerText": "",
+      "message": "The provided evidence does not state the number of commissioners on the Commission or their salaries."
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "invalid input: K = 0",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "invalid input: K = 11 (above max 10)",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "invalid input: K = \"3\" (string)",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "invalid input: K = 2.5",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "invalid input: empty question",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "invalid input: question over 500 chars",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "invalid input: unknown docIds",
+      "expected": "invalid_input, no model call",
+      "actual": "invalid_input, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "empty candidate set (no matching passage)",
+      "expected": "insufficient_evidence, model not called",
+      "actual": "insufficient_evidence, candidates=0, calls=0",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "model outage",
+      "expected": "model_unavailable after 2 attempts, sources still shown",
+      "actual": "model_unavailable, calls=2, passages=4",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "retrieval outage",
+      "expected": "retrieval_error",
+      "actual": "retrieval_error",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "malformed model output twice",
+      "expected": "stops after 1 repair",
+      "actual": "model_unavailable, calls=2, repairs=1",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "model invents a citation and an uncited claim",
+      "expected": "invented tag removed, uncited claim reported",
+      "actual": "cited=1, unsupported=1",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "model states a number not in any passage",
+      "expected": "claim flagged number_not_in_source",
+      "actual": "number_not_in_source",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "tied scores in shuffled order (50 runs)",
+      "expected": "one deterministic order",
+      "actual": "d1/c1 d1/c2 d1/c3 d2/c1",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "fewer than K valid + NaN score + duplicate",
+      "expected": "1 result, 1 invalid, 1 duplicate, no filler",
+      "actual": "returned=1, invalid=1, duplicate=1",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "noisy copy of the Act (page numbers, headers, tabs, CRLF, BOM)",
+      "expected": "identical chunks to the clean copy",
+      "actual": "23 page numbers + 24 header lines removed; identical=true",
+      "pass": true,
+      "note": ""
+    },
+    {
+      "name": "conflicting evidence (two synthetic docs: 500 vs 800 shillings), real model",
+      "expected": "conflicting_evidence with both cited",
+      "actual": "insufficient_evidence, conflict refs=-",
+      "pass": false,
+      "note": ""
+    }
+  ]
+}
