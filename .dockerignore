@@ -1,0 +1,19 @@
+# Keep the build context small and secrets out of the image
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+.git
+.gitignore
+**/*.log
+.vscode
+.idea
+
+# Build outputs and runtime data are recreated in the image / at runtime
+Frontend/dist
+Backend/data/processed
+Backend/data/uploads
+
+# Not needed at runtime
+Backend/test
+Frontend/README.md

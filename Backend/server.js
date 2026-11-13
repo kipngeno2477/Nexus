@@ -18,6 +18,12 @@ if (process.env.TRUST_PROXY) app.set("trust proxy", Number(process.env.TRUST_PRO
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 
+// Liveness/readiness probe for PrimeCloud: cheap, never calls the model (no quota use).
+app.get("/healthz", (req, res) => {
+  const ok = !kb.error && kb.chunks.length > 0;
+  res.status(ok ? 200 : 503).json({ ok, chunks: kb.chunks.length, ...(kb.error ? { error: kb.error } : {}) });
+});
+
 app.use("/api", askRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/session", sessionRoutes);
@@ -43,6 +49,15 @@ try {
 }
 console.log(`LLM: ${llm.config.provider} ${llm.config.model || "(LLM_MODEL not set)"} @ ${llm.config.baseUrl}`);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Zero-downtime deploys stop the old container with SIGTERM: finish in-flight answers, then exit.
+for (const signal of ["SIGTERM", "SIGINT"]) {
+  process.on(signal, () => {
+    console.log(`${signal} received, closing server`);
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(0), 10_000).unref(); // safety net
+  });
+}
