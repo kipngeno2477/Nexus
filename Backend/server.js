@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import askRoutes from "./routes/ask.route.js";
 import documentRoutes from "./routes/uploadDocumentRoute.route.js";
+import sessionRoutes from "./routes/session.route.js";
 import { kb } from "./src/kb.js";
 import { llm } from "./src/llm/instance.js";
 
@@ -17,6 +18,7 @@ app.use(express.json({ limit: "1mb" }));
 
 app.use("/api", askRoutes);
 app.use("/api/documents", documentRoutes);
+app.use("/api/session", sessionRoutes);
 
 // Serve the built frontend (Frontend/dist) from the same origin when it exists.
 const DIST = process.env.FRONTEND_DIST || path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../Frontend/dist");

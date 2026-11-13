@@ -41,6 +41,16 @@ const STEPS = {
     const k = ctx.input.k ?? ctx.limits.defaultK;
     if (!Number.isInteger(k) || k < 1 || k > ctx.limits.maxK)
       return fail(ctx, "invalid_input", `k must be an integer between 1 and ${ctx.limits.maxK}.`);
+    // Optional document filter: [] / undefined = search everything.
+    const ids = ctx.input.docIds;
+    if (ids != null && !(Array.isArray(ids) && ids.length <= 20 && ids.every((d) => typeof d === "string" && d.length > 0 && d.length <= 100)))
+      return fail(ctx, "invalid_input", "docIds must be an array of at most 20 document ids.");
+    if (ids?.length) {
+      const known = new Set(ctx.deps.index.chunks.map((c) => c.docId));
+      const unknown = ids.filter((d) => !known.has(d));
+      if (unknown.length) return fail(ctx, "invalid_input", `Unknown document id(s): ${unknown.join(", ")}`);
+      ctx.docFilter = new Set(ids);
+    }
     ctx.question = q;
     ctx.k = k;
     return "RETRIEVE";
@@ -49,7 +59,9 @@ const STEPS = {
   RETRIEVE(ctx) {
     try {
       const t0 = performance.now();
-      const { candidates, queryTerms } = ctx.deps.index.score(ctx.question);
+      const scored = ctx.deps.index.score(ctx.question);
+      const { queryTerms } = scored;
+      const candidates = ctx.docFilter ? scored.candidates.filter((c) => ctx.docFilter.has(c.docId)) : scored.candidates;
       const t1 = performance.now();
       const sel = topK(candidates, ctx.k);
       const t2 = performance.now();
@@ -59,6 +71,7 @@ const STEPS = {
         queryTerms,
         corpusChunks: ctx.deps.index.chunks.length,
         candidates: candidates.length,
+        docFilter: ctx.docFilter ? [...ctx.docFilter] : null,
         requestedK: sel.requestedK,
         returned: sel.returned,
         insufficient: sel.insufficient,
@@ -197,6 +210,7 @@ function citationFor(chunk, tagIndex, limits) {
     chunkId: chunk.chunkId,
     sourceFile: chunk.sourceFile,
     sourceUrl: chunk.sourceUrl ?? null,
+    private: !!chunk.private, // from the user's own uploaded document
     score: +chunk.score.toFixed(4),
     excerpt: excerpt(chunk.text, limits.excerptChars),
   };

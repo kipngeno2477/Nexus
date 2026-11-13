@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ask, health } from './api.js'
+import { ask, health, listDocuments, listMyDocuments, setSessionId } from './api.js'
 import StatusBanner from './components/StatusBanner.jsx'
 import Answer from './components/Answer.jsx'
 import Sources from './components/Sources.jsx'
 import RetrievalDetails from './components/RetrievalDetails.jsx'
 import PassageModal from './components/PassageModal.jsx'
 import KnowledgeBase from './components/KnowledgeBase.jsx'
+import MyDocuments from './components/MyDocuments.jsx'
 
 const MAX_CHARS = 500
 const EXAMPLES = [
@@ -56,13 +57,39 @@ export default function App() {
   const [passage, setPassage] = useState(null)
   const [kbOpen, setKbOpen] = useState(false)
   const [h, setH] = useState(null)
+  const [docs, setDocs] = useState([])
+  const [myDocs, setMyDocs] = useState([]) // private, this browser session only
+  const [mySession, setMySession] = useState({ enabled: true, limits: null })
+  const [docFilter, setDocFilter] = useState('') // '' = all documents
   const abortRef = useRef(null)
   const elapsed = useElapsed(loading)
 
   const refreshHealth = useCallback(() => health().then(setH), [])
+  const refreshDocs = useCallback(
+    () =>
+      listDocuments().then((r) => {
+        if (!r.ok) return
+        setDocs(r.data.docs)
+        setDocFilter((f) => (f && !f.startsWith('my-') && !r.data.docs.some((d) => d.docId === f) ? '' : f)) // removed doc → all
+      }),
+    []
+  )
+  const refreshMyDocs = useCallback(
+    () =>
+      listMyDocuments().then((r) => {
+        if (!r.ok) return
+        setMySession({ enabled: r.data.enabled, limits: r.data.limits })
+        setMyDocs(r.data.docs)
+        if (!r.data.active) setSessionId(null) // expired or never created
+        setDocFilter((f) => (f.startsWith('my-') && !r.data.docs.some((d) => d.docId === f) ? '' : f))
+      }),
+    []
+  )
   useEffect(() => {
     refreshHealth()
-  }, [refreshHealth])
+    refreshDocs()
+    refreshMyDocs()
+  }, [refreshHealth, refreshDocs, refreshMyDocs])
 
   // Deep link: /?q=question[&simulate=model] asks immediately (shareable questions, demo setup).
   const submitRef = useRef(null)
@@ -95,11 +122,12 @@ export default function App() {
     } catch {
       /* deep link is a convenience only */
     }
-    const r = await ask({ question: text, k: Number(k), simulate: sim || undefined }, ac.signal)
+    const r = await ask({ question: text, k: Number(k), simulate: sim || undefined, docIds: docFilter ? [docFilter] : undefined }, ac.signal)
     if (ac.signal.aborted) return
     setLoading(false)
     setResult(r.data && 'status' in r.data ? r.data : { status: 'network_error', message: r.data?.message ?? 'Unexpected response' })
     if (r.data?.status === 'model_unavailable' || r.data?.status === 'retrieval_error') refreshHealth()
+    if (r.data?.status === 'invalid_input' && /Unknown document/.test(r.data.message ?? '')) refreshMyDocs() // private session expired
   }
 
   function cancel() {
@@ -113,11 +141,23 @@ export default function App() {
   }, [])
   const closePassage = useCallback(() => setPassage(null), [])
   const closeKb = useCallback(() => setKbOpen(false), [])
+  const onKbChanged = useCallback(() => {
+    refreshHealth()
+    refreshDocs()
+  }, [refreshHealth, refreshDocs])
 
   const citedRefs = useMemo(() => new Set(result?.citations?.map((c) => c.ref) ?? []), [result])
   const hasPipelineResult = result && Array.isArray(result.evidence)
   const showSourcesOnly = result?.status === 'model_unavailable' || citedRefs.size === 0
   const demoFailures = h?.data?.demoFailures
+  const allDocs = [...docs, ...myDocs]
+  const filteredDoc = allDocs.find((d) => d.docId === docFilter)
+  const sharedText = docs.length === 1 ? docs[0].title : docs.length > 1 ? `the ${docs.length} documents in the knowledge base` : 'the documents in the knowledge base'
+  const scopeText = filteredDoc
+    ? `“${filteredDoc.title}”${filteredDoc.private ? ' (your document)' : ''}`
+    : myDocs.length
+      ? `${sharedText} and your ${myDocs.length === 1 ? 'document' : `${myDocs.length} documents`}`
+      : sharedText
 
   return (
     <div className="app">
@@ -138,10 +178,10 @@ export default function App() {
       </header>
 
       <section className="hero">
-        <h2>Ask about your right to information</h2>
+        <h2>Ask about the law in plain language</h2>
         <p>
-          Answers come only from the Access to Information Act, 2016 (Kenya). Every statement links to the section it came
-          from. If the Act doesn't cover your question, Nexus says so instead of guessing.
+          Answers come only from {scopeText}. Every statement links to the section it came from. If the documents don't
+          cover your question, Nexus says so instead of guessing.
         </p>
 
         <form
@@ -167,6 +207,28 @@ export default function App() {
           />
           <div className="ask-row">
             <div className="ask-controls">
+              {allDocs.length > 1 && (
+                <label title="Limit the search to one document">
+                  Search in
+                  <select value={docFilter} onChange={(e) => setDocFilter(e.target.value)} style={{ maxWidth: 220 }}>
+                    <option value="">All documents</option>
+                    {docs.map((d) => (
+                      <option key={d.docId} value={d.docId}>
+                        {d.title}
+                      </option>
+                    ))}
+                    {myDocs.length > 0 && (
+                      <optgroup label="Your documents">
+                        {myDocs.map((d) => (
+                          <option key={d.docId} value={d.docId}>
+                            {d.title}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                  </select>
+                </label>
+              )}
               <label title="How many passages the bounded heap selects as evidence">
                 Passages (K)
                 <input type="number" min={1} max={10} step={1} value={k} onChange={(e) => setK(e.target.value)} />
@@ -192,6 +254,22 @@ export default function App() {
             )}
           </div>
         </form>
+
+        {mySession.enabled && (
+          <MyDocuments
+            docs={myDocs}
+            limits={mySession.limits}
+            disabled={loading}
+            onAdded={(doc) => {
+              setMyDocs((d) => [...d, doc])
+              setDocFilter(doc.docId) // search the new document by default
+            }}
+            onRemoved={(doc) => {
+              setMyDocs((d) => d.filter((x) => x.docId !== doc.docId))
+              setDocFilter((f) => (f === doc.docId ? '' : f))
+            }}
+          />
+        )}
 
         <div className="examples">
           <span className="chip-label">Try:</span>
@@ -256,7 +334,7 @@ export default function App() {
       </footer>
 
       {passage && <PassageModal source={passage} onClose={closePassage} />}
-      {kbOpen && <KnowledgeBase onClose={closeKb} onChanged={refreshHealth} />}
+      {kbOpen && <KnowledgeBase onClose={closeKb} onChanged={onKbChanged} />}
     </div>
   )
 }

@@ -55,7 +55,11 @@ export function chunkDocument(doc, opts = {}) {
     usedSectionIds.set(sectionId, n + 1);
     if (n > 0) sectionId = `${sectionId}-${n + 1}`; // keep ids unique within a doc
 
-    const words = sec.lines.join("\n").split(/[ \t]+/).filter(Boolean); // keep line breaks inside words list
+    // One token per word, independent of blank lines; a word that starts a new line carries
+    // a leading "\n" so excerpts keep their clause layout.
+    const words = sec.lines.flatMap((line, li) =>
+      line.split(/\s+/).filter(Boolean).map((w, wi) => (wi === 0 && li > 0 ? `\n${w}` : w))
+    );
     const step = Math.max(1, maxWords - overlapWords);
     for (let start = 0, part = 1; start < words.length; start += step, part++) {
       const slice = words.slice(start, start + maxWords);
@@ -69,7 +73,7 @@ export function chunkDocument(doc, opts = {}) {
         sectionId,
         sectionTitle: sec.title,
         chunkId: `${sectionId}-c${String(part).padStart(2, "0")}`,
-        text: slice.join(" "),
+        text: slice.join(" ").replace(/ \n/g, "\n").replace(/^\n/, ""),
         wordStart: start,
       });
       if (start + maxWords >= words.length) break;

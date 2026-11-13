@@ -6,7 +6,7 @@
 import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { cleanText } from "./clean.js";
+import { cleanTextWithStats, inferTitle } from "./clean.js";
 import { chunkDocument, docIdFromFilename, slug } from "./chunk.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -14,38 +14,54 @@ export const RAW_DIR = path.join(ROOT, "data/raw");
 export const SOURCES_FILE = path.join(ROOT, "data/sources.json");
 export const OUT_FILE = path.join(ROOT, "data/processed/chunks.json");
 
-export function ingestText({ fileName, raw, title, docId, sourceUrl }) {
-  const text = cleanText(raw);
+/** Clean + chunk one document and report what ingestion did (shown after upload). */
+export function ingestWithReport({ fileName, raw, title, docId, sourceUrl }) {
+  const { text, stats } = cleanTextWithStats(raw);
   const id = docId ? slug(docId) : docIdFromFilename(fileName);
-  const docTitle = title || text.split("\n").find((l) => l.trim()) || fileName;
-  return chunkDocument({ docId: id, docTitle: docTitle.slice(0, 160), sourceFile: fileName, sourceUrl, text });
+  const docTitle = (title?.trim() || inferTitle(raw, fileName)).slice(0, 160);
+  const chunks = chunkDocument({ docId: id, docTitle, sourceFile: fileName, sourceUrl, text });
+  const sections = [...new Map(chunks.map((c) => [c.sectionId, c.sectionTitle])).entries()];
+  const report = {
+    ...stats,
+    sections: sections.length,
+    sectionTitles: sections.slice(0, 50).map(([, t]) => t),
+    parts: [...new Set(chunks.map((c) => c.part).filter(Boolean))],
+    chunks: chunks.length,
+    words: chunks.reduce((n, c) => n + c.text.split(/\s+/).length, 0),
+    headingsDetected: sections.length > 1 || sections[0]?.[0] !== "preamble",
+  };
+  return { chunks, report, docTitle, docId: id };
 }
 
-async function loadSources() {
+export function ingestText(args) {
+  return ingestWithReport(args).chunks;
+}
+
+async function loadSources(file) {
   try {
-    return JSON.parse(await readFile(SOURCES_FILE, "utf8"));
+    return JSON.parse(await readFile(file, "utf8"));
   } catch (e) {
     if (e.code === "ENOENT") return {};
-    throw new Error(`Invalid ${path.basename(SOURCES_FILE)}: ${e.message}`);
+    throw new Error(`Invalid ${path.basename(file)}: ${e.message}`);
   }
 }
 
-export async function ingestDirectory(dir = RAW_DIR) {
-  const sources = await loadSources();
+export async function ingestDirectory(dir = RAW_DIR, sourcesFile = SOURCES_FILE) {
+  const sources = await loadSources(sourcesFile);
   const files = (await readdir(dir)).filter((f) => /\.(txt|md)$/i.test(f)).sort();
   const chunks = [];
   const docs = [];
   for (const f of files) {
-    const meta = sources[f] ?? {};
-    const docChunks = ingestText({ fileName: f, raw: await readFile(path.join(dir, f), "utf8"), ...meta });
-    if (docs.some((d) => d.docId === docChunks[0]?.docId)) throw new Error(`Duplicate docId for ${f}`);
-    docs.push({
-      docId: docChunks[0]?.docId ?? docIdFromFilename(f),
-      title: docChunks[0]?.docTitle ?? f,
-      file: f,
-      sourceUrl: meta.sourceUrl ?? null,
-      chunks: docChunks.length,
+    const { docId, title, sourceUrl } = sources[f] ?? {};
+    const { chunks: docChunks, report, docTitle, docId: id } = ingestWithReport({
+      fileName: f,
+      raw: await readFile(path.join(dir, f), "utf8"),
+      title,
+      docId,
+      sourceUrl: sourceUrl || undefined,
     });
+    if (docs.some((d) => d.docId === id)) throw new Error(`Duplicate docId "${id}" for ${f}`);
+    docs.push({ docId: id, title: docTitle, file: f, sourceUrl: sourceUrl || null, chunks: docChunks.length, ingest: report });
     chunks.push(...docChunks);
   }
   return { docs, chunks };

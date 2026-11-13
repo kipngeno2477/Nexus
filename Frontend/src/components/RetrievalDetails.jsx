@@ -50,6 +50,11 @@ export default function RetrievalDetails({ result }) {
                 <Stat value={`${r.selectMs} ms`} label="heap selection time" />
               </div>
               <p className="muted" style={{ fontSize: 13, margin: '10px 0 0' }}>
+                {r.docFilter && (
+                  <>
+                    Searched only: <span className="mono">{r.docFilter.join(', ')}</span> ·{' '}
+                  </>
+                )}
                 Query terms: <span className="mono">{r.queryTerms.join(', ') || '(none)'}</span>
                 {r.coverage?.uncovered?.length > 0 && (
                   <>

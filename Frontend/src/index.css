@@ -206,3 +206,23 @@ td.num { font-family: var(--mono); text-align: right; }
 
 .footer { margin-top: 40px; color: var(--text-3); font-size: 13px; border-top: 1px solid var(--border); padding-top: 16px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Ingestion report */
+.report { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+.report-grid { display: grid; gap: 2px; }
+.report-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; padding: 3px 0; }
+.report-note { font-size: 13px; margin: 8px 0 0; }
+
+/* Your documents (private, per session) */
+.mydocs { margin-top: 12px; padding: 12px 14px; border: 1px dashed var(--border); border-radius: var(--radius); background: color-mix(in srgb, var(--surface) 60%, transparent); }
+.mydocs-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14.5px; }
+.mydocs-paste { margin-top: 10px; }
+.mydocs-paste input, .mydocs-paste textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.mydocs-paste textarea { min-height: 120px; font-family: var(--mono); font-size: 13px; }
+.mydocs-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.mydocs-list li { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; }
+.mydocs-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mydocs-title { font-weight: 600; font-size: 14px; flex: 1 1 200px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mydocs-msg { font-size: 13.5px; margin: 8px 0 0; }
+.mydocs-note { font-size: 12.5px; margin: 8px 0 0; }
+.tag-private { background: var(--accent-soft); color: var(--accent); border-color: transparent; }

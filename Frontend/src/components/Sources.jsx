@@ -35,6 +35,7 @@ export default function Sources({ evidence, citedRefs, activeRef, onOpen, showAl
               </a>
             )}
             <span className="tag">{e.chunkId}</span>
+            {e.private && <span className="tag tag-private">your document</span>}
             {hasCitations && !citedRefs.has(e.ref) && <span className="tag">retrieved, not cited</span>}
             <span className="score">score {e.score.toFixed(2)}</span>
           </div>
