@@ -50,8 +50,10 @@ test("chunks carry identifiers and are unique", () => {
 test("long sections split into overlapping chunks", () => {
   const body = Array.from({ length: 700 }, (_, i) => `word${i}`).join(" ");
   const chunks = ingestText({ fileName: "long.txt", raw: `SECTION 4 Long\n${body}` });
-  assert.equal(chunks.length, 3);
-  assert.deepEqual(chunks.map((c) => c.chunkId), ["s4-c01", "s4-c02", "s4-c03"]);
+  // 200-word windows, 40-word overlap → starts at 0,160,320,480,640
+  assert.deepEqual(chunks.map((c) => c.chunkId), ["s4-c01", "s4-c02", "s4-c03", "s4-c04", "s4-c05"]);
+  assert.ok(chunks.every((c) => c.text.split(" ").length <= 200));
+  assert.ok(chunks[1].text.startsWith("word160"), "overlap preserved");
 });
 
 test("BM25 + heap retrieve the supporting section", () => {

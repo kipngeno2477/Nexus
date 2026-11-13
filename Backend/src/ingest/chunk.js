@@ -1,38 +1,46 @@
 // Splits cleaned text into section-aware chunks with stable identifiers.
 
-import { isHeading } from "./clean.js";
+import { isHeading, isPartHeading } from "./clean.js";
 
-const DEFAULTS = { maxWords: 300, overlapWords: 40, minWords: 8 };
+// ~200 words ≈ 270 tokens: small enough that K=4 evidence fits a fast prompt on CPU,
+// large enough to keep a subsection and its conditions together.
+const DEFAULTS = { maxWords: 200, overlapWords: 40, minWords: 8 };
 
-function slug(s) {
+export function slug(s) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "untitled";
 }
 
 function sectionIdFrom(title, index) {
-  const m = title.match(/^(?:section|sec\.|part|chapter|article|schedule|regulation|rule|clause)?\s*([0-9ivxlc]+(?:\.[0-9]+)*[a-z]?)/i);
+  const m = title.match(/^(?:section|sec\.|chapter|article|regulation|rule|clause)?\s*([0-9ivxlc]+(?:\.[0-9]+)*[a-z]?)/i);
   return m ? `s${m[1].toLowerCase()}` : `s${index}`;
 }
 
 /** Groups lines into sections; text before the first heading becomes "preamble". */
 export function splitSections(cleaned) {
   const sections = [];
-  let current = { title: "Preamble", lines: [], start: 0 };
-  let offset = 0;
+  let part = null;
+  let current = { title: "Preamble", part, lines: [] };
+  const flush = () => {
+    if (current.lines.join(" ").trim()) sections.push(current);
+  };
   for (const line of cleaned.split("\n")) {
-    if (isHeading(line)) {
-      if (current.lines.join(" ").trim()) sections.push(current);
-      current = { title: line, lines: [], start: offset };
+    if (isPartHeading(line)) {
+      flush();
+      part = line;
+      current = { title: line, part, lines: [], partIntro: true }; // text directly under a Part heading
+    } else if (isHeading(line)) {
+      flush();
+      current = { title: line, part, lines: [] };
     } else if (line) {
       current.lines.push(line);
     }
-    offset += line.length + 1;
   }
-  if (current.lines.join(" ").trim()) sections.push(current);
+  flush();
   return sections;
 }
 
 /**
- * @param {{docId:string, docTitle:string, sourceFile:string, text:string}} doc  text already cleaned
+ * @param {{docId:string, docTitle:string, sourceFile:string, text:string, sourceUrl?:string}} doc  text already cleaned
  * @returns chunk objects carrying full citation metadata
  */
 export function chunkDocument(doc, opts = {}) {
@@ -41,12 +49,13 @@ export function chunkDocument(doc, opts = {}) {
   const usedSectionIds = new Map();
 
   splitSections(doc.text).forEach((sec, si) => {
-    let sectionId = sec.title === "Preamble" ? "preamble" : sectionIdFrom(sec.title, si);
+    let sectionId =
+      sec.title === "Preamble" ? "preamble" : sec.partIntro ? `p-${slug(sec.title).slice(0, 20)}` : sectionIdFrom(sec.title, si);
     const n = usedSectionIds.get(sectionId) ?? 0;
     usedSectionIds.set(sectionId, n + 1);
     if (n > 0) sectionId = `${sectionId}-${n + 1}`; // keep ids unique within a doc
 
-    const words = sec.lines.join(" ").split(/\s+/).filter(Boolean);
+    const words = sec.lines.join("\n").split(/[ \t]+/).filter(Boolean); // keep line breaks inside words list
     const step = Math.max(1, maxWords - overlapWords);
     for (let start = 0, part = 1; start < words.length; start += step, part++) {
       const slice = words.slice(start, start + maxWords);
@@ -55,6 +64,8 @@ export function chunkDocument(doc, opts = {}) {
         docId: doc.docId,
         docTitle: doc.docTitle,
         sourceFile: doc.sourceFile,
+        ...(doc.sourceUrl ? { sourceUrl: doc.sourceUrl } : {}),
+        part: sec.part,
         sectionId,
         sectionTitle: sec.title,
         chunkId: `${sectionId}-c${String(part).padStart(2, "0")}`,

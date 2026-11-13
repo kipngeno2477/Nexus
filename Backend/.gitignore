@@ -1,3 +1,5 @@
 node_modules
 .env
-*creat.mddata/processed/
+*creat.md
+data/processed/
+data/uploads/
