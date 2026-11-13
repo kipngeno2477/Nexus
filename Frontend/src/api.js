@@ -4,7 +4,7 @@
 const API_BASE = (
   typeof window !== 'undefined' && window.__NEXUS_API_URL__
     ? window.__NEXUS_API_URL__
-    : import.meta.env?.VITE_API_BASE_URL || ''
+    : import.meta.env?.VITE_API_BASE_URL || 'https://backend.primecloud.cloud'
 ).replace(/\/+$/, '')
 
 // Private-document session id (issued by the server on first private upload).
@@ -60,7 +60,7 @@ async function request(path, options = {}) {
         status: res.status,
         data: {
           status: 'invalid_response',
-          message: `Expected JSON but received ${contentType || 'HTML'}. Make sure the backend service is running and accessible.`,
+          message: `Expected JSON but received ${contentType || 'HTML'}. Make sure the backend service is running and accessible at ${API_BASE}.`,
         },
       }
     }
@@ -72,7 +72,7 @@ async function request(path, options = {}) {
       status: 0,
       data: {
         status: 'network_error',
-        message: 'Cannot reach the backend server. Check your connection or backend URL.',
+        message: `Cannot reach the backend server at ${API_BASE}. Check your connection or backend URL.`,
         detail: e.message,
       },
     }
