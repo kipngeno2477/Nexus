@@ -12,6 +12,8 @@ import { kb } from "./src/kb.js";
 import { llm } from "./src/llm/instance.js";
 
 const app = express();
+// Behind PrimeCloud's proxy, req.ip must come from X-Forwarded-For for per-client rate limits.
+if (process.env.TRUST_PROXY) app.set("trust proxy", Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));

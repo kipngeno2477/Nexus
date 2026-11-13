@@ -42,10 +42,12 @@ Rules:
 1. Break the answer into short claims in plain language. Every claim must list the evidence tags (e.g. "E2") that directly support it.
 2. Do not state anything the evidence does not say. No guesses, no general advice.
    Include every fact in the evidence that answers the question: amounts, fees, time limits, who decides, conditions and exceptions. Quote numbers exactly as written.
-3. If the evidence does not answer the question, set verdict "insufficient_evidence", return no claims, and explain in "missing" what information is absent.
-4. If the evidence covers only part of the question, answer that part and describe the uncovered part in "missing".
+3. If the evidence answers the question in substance, answer it, even if the wording differs (e.g. "public entity" vs "public officer", "cost" vs "fee") or the answer has conditions or exceptions; state those conditions as separate claims. Use verdict "insufficient_evidence" (with no claims, and an explanation in "missing") only when nothing in the evidence answers the question.
+4. If the evidence covers only part of the question, set verdict "answered", answer that part and describe the uncovered part in "missing".
+   Example: asked "how much does X cost?" and the evidence says "no fee for the application; copying fees may not exceed actual costs" but gives no amount: verdict "answered", those facts as claims, and "missing": "The exact amounts are set by regulations not included here."
+   If you can state any fact from the evidence that helps answer the question, the verdict must be "answered", never "insufficient_evidence".
 5. If passages contradict each other on the question, set verdict "conflicting_evidence" and describe each conflict with its tags.
-6. At most 6 claims. Respond with JSON only, matching:
+6. At most 8 claims; one fact per claim (list items may be separate claims). Respond with JSON only, matching:
 {"verdict": "answered" | "insufficient_evidence" | "conflicting_evidence",
  "claims": [{"text": "...", "evidence": ["E1"]}],
  "missing": "",

@@ -188,3 +188,58 @@ test("trace records the fixed workflow", async () => {
   assert.deepEqual(r.debug.trace.map((t) => t.state), ["VALIDATE", "RETRIEVE", "GATE", "SYNTHESIZE", "VERIFY"]);
   assert.equal(r.debug.retrieval.method, "bm25 + bounded min-heap top-K");
 });
+
+test("cross-reference: section referenced by >=2 selected chunks is added once", async () => {
+  const { followCrossReferences } = await import("../src/pipeline/answer.js");
+  const mk = (sectionId, chunkId, text, score) => ({ docId: "d", sectionId, chunkId, text, score });
+  const selected = [mk("s2", "s2-c01", "exempt information is withheld under section 6", 5), mk("s4", "s4-c01", "only as exempted under section 6 and section 9", 4)];
+  const candidates = [...selected, mk("s6", "s6-c02", "limitation text", 1), mk("s6", "s6-c01", "limitation list", 3), mk("s9", "s9-c01", "x", 2)];
+  const all = candidates;
+  const { added, trace } = followCrossReferences(selected, candidates, all, 1);
+  assert.deepEqual(added.map((c) => c.chunkId), ["s6-c01"], "first chunk of section 6 (start of the provision); s9 referenced once only");
+  assert.deepEqual(trace[0].referencedBy.sort(), ["s2-c01", "s4-c01"]);
+  assert.equal(followCrossReferences(selected, candidates, all, 0).added.length, 0, "disabled when max = 0");
+  const noTarget = followCrossReferences(selected, selected, selected, 1);
+  assert.equal(noTarget.added.length, 0, "reference to a section not in the corpus adds nothing");
+});
+
+test("numbers in a claim must appear in the cited passage", async () => {
+  const { numbersNotInSource } = await import("../src/pipeline/verify.js");
+  const src = "a fine not exceeding five hundred thousand shillings or imprisonment for 1 year; within twenty-one days";
+  assert.deepEqual(numbersNotInSource("fine of up to five hundred thousand shillings within twenty-one days, 1 year", src), []);
+  assert.deepEqual(numbersNotInSource("within 30 days", src), ["30"]);
+  assert.deepEqual(numbersNotInSource("a fine of one million shillings", src), ["one million"]);
+  const llm = mockLlm({ verdict: "answered", claims: [{ text: "The trading licence fee is 750 shillings per year.", evidence: ["E1"] }], missing: "", conflicts: [] });
+  const r = await run({ question: "trading licence fee", k: 1 }, llm);
+  assert.ok(r.warnings.some((w) => w.code === "number_not_in_source" && /750/.test(w.detail)));
+  assert.equal(r.answer[0].lowOverlap, true);
+});
+
+test("'answered' with no claims triggers one re-ask, then abstains if still empty", async () => {
+  const empty = { verdict: "answered", claims: [], missing: "facts are listed here instead", conflicts: [] };
+  const good = { verdict: "answered", claims: [{ text: "A trading licence is required.", evidence: ["E1"] }], missing: "", conflicts: [] };
+  const fixed = await run({ question: "trading licence", k: 1 }, mockLlm(empty, good));
+  assert.equal(fixed.status, "answered");
+  assert.equal(fixed.debug.llm.repairs, 1);
+  assert.match(fixed.debug.llm.repairReasons[0].problem, /claims/);
+
+  const llm = mockLlm(empty, empty);
+  const still = await run({ question: "trading licence", k: 1 }, llm);
+  assert.equal(still.status, "insufficient_evidence");
+  assert.equal(llm.calls.length, 2, "bounded: original + one re-ask");
+});
+
+test("number found in another passage completes the citation instead of flagging", async () => {
+  const llm = mockLlm({
+    verdict: "answered",
+    claims: [{ text: "The trading licence fee is five hundred shillings per year.", evidence: ["E2"] }],
+    missing: "",
+    conflicts: [],
+  });
+  const r = await run({ question: "trading licence fee", k: 3 }, llm);
+  const fee = r.citations.find((c) => c.sectionId === "s2");
+  assert.ok(fee, "section 2 (five hundred) is cited");
+  assert.ok(r.answer[0].refs.includes(fee.ref));
+  assert.equal(r.answer[0].lowOverlap, false);
+  assert.ok(r.warnings.some((w) => w.code === "citation_completed"));
+});

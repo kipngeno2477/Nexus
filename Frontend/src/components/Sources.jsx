@@ -36,6 +36,7 @@ export default function Sources({ evidence, citedRefs, activeRef, onOpen, showAl
             )}
             <span className="tag">{e.chunkId}</span>
             {e.private && <span className="tag tag-private">your document</span>}
+            {e.crossRef && <span className="tag" title={`Referenced by ${e.crossRef.from.join(', ')}`}>cross-reference</span>}
             {hasCitations && !citedRefs.has(e.ref) && <span className="tag">retrieved, not cited</span>}
             <span className="score">score {e.score.toFixed(2)}</span>
           </div>

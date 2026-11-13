@@ -31,7 +31,7 @@ export default function RetrievalDetails({ result }) {
           </div>
           <p className="muted" style={{ fontSize: 13, margin: '8px 0 0' }}>
             Limits: at most {debug.limits.maxSteps} steps, {debug.limits.maxLlmAttempts} model attempts, {debug.limits.maxRepairs} JSON repair.
-            Total {debug.totalMs} ms.
+            Total {debug.totalMs} ms.{debug.cached && ' Served from cache (same question asked recently; no model call).'}
           </p>
         </div>
 
@@ -47,6 +47,7 @@ export default function RetrievalDetails({ result }) {
                 <Stat value={r.rejected.invalid} label="invalid scores rejected" />
                 <Stat value={r.rejected.duplicate} label="duplicates rejected" />
                 {r.coverage && <Stat value={`${r.coverage.covered}/${r.coverage.total}`} label="question terms found" />}
+                <Stat value={r.crossRefs?.length ?? 0} label="cross-references followed" />
                 <Stat value={`${r.selectMs} ms`} label="heap selection time" />
               </div>
               <p className="muted" style={{ fontSize: 13, margin: '10px 0 0' }}>
@@ -66,7 +67,7 @@ export default function RetrievalDetails({ result }) {
 
             {evidence.length > 0 && (
               <div>
-                <h4 className="section-title">Top-K from the bounded min-heap (descending; ties by doc ID, then chunk ID)</h4>
+                <h4 className="section-title">Top-K from the bounded min-heap (descending; ties by doc ID, then chunk ID){r.crossRefs?.length ? ' + cross-referenced section' : ''}</h4>
                 <div className="table-wrap">
                   <table>
                     <thead>
@@ -84,7 +85,10 @@ export default function RetrievalDetails({ result }) {
                           <td>{e.ref}</td>
                           <td className="mono">{e.docId}</td>
                           <td>{e.sectionTitle}</td>
-                          <td className="mono">{e.chunkId}</td>
+                          <td className="mono">
+                            {e.chunkId}
+                            {e.crossRef && <span className="muted"> (cross-ref)</span>}
+                          </td>
                           <td className="num">{e.score.toFixed(4)}</td>
                         </tr>
                       ))}
@@ -105,6 +109,11 @@ export default function RetrievalDetails({ result }) {
             {llm.ms != null && <> · {(llm.ms / 1000).toFixed(1)} s</>}
             {' '}· calls: {llm.calls} · repairs: {llm.repairs}
           </p>
+          {llm.fallbackFrom && (
+            <p className="muted" style={{ margin: '6px 0 0', fontSize: 13.5 }}>
+              Primary model <span className="mono">{llm.fallbackFrom.model}</span> failed ({llm.fallbackFrom.error}); answered by the fallback model.
+            </p>
+          )}
           {llm.errors.length > 0 && (
             <ul style={{ margin: '6px 0 0', paddingLeft: 18, fontSize: 13.5 }}>
               {llm.errors.map((e, i) => (

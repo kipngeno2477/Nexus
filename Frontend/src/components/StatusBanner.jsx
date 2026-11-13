@@ -7,6 +7,7 @@ const STATUS = {
   retrieval_error: { tone: 'bad', icon: '⚠', title: 'Search failed', body: null },
   step_budget_exceeded: { tone: 'bad', icon: '⚠', title: 'Workflow stopped', body: null },
   network_error: { tone: 'bad', icon: '⚠', title: 'Connection problem', body: null },
+  rate_limited: { tone: 'info', icon: '⏳', title: 'Please slow down', body: null },
 }
 
 export default function StatusBanner({ status, message }) {

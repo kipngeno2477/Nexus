@@ -7,15 +7,17 @@
 //   LLM_API_KEY    (openai_compatible only; server-side secret)
 //   LLM_FALLBACK_MODEL     (openai_compatible) tried once if the primary model fails
 //   LLM_REASONING_EFFORT   (openai_compatible) sent only to the primary model, e.g. "none"
+//   LLM_FALLBACK_REASONING_EFFORT  sent only to the fallback, e.g. "low" (keeps reasoning from eating the output budget)
 
 export class LlmError extends Error {
   /** kind: timeout | unavailable | rate_limited | http | bad_response | not_configured */
-  constructor(kind, message, { retryable = false, status } = {}) {
+  constructor(kind, message, { retryable = false, status, retryAfterMs } = {}) {
     super(message);
     this.name = "LlmError";
     this.kind = kind;
     this.retryable = retryable;
     this.status = status;
+    this.retryAfterMs = retryAfterMs; // provider's suggested wait (rate limits)
   }
 }
 
@@ -31,6 +33,7 @@ export function llmConfigFromEnv(env = process.env) {
     keepAlive: env.LLM_KEEP_ALIVE || "30m",
     fallbackModel: env.LLM_FALLBACK_MODEL || "",
     reasoningEffort: env.LLM_REASONING_EFFORT || "", // e.g. "none" for qwen/qwen3.8-27b on Groq
+    fallbackReasoningEffort: env.LLM_FALLBACK_REASONING_EFFORT || "", // e.g. "low" for openai/gpt-oss-20b
   };
 }
 
@@ -51,8 +54,16 @@ async function postJson(url, body, { headers = {}, timeoutMs }) {
   } finally {
     clearTimeout(timer);
   }
-  const text = await res.text();
-  if (res.status === 429) throw new LlmError("rate_limited", "LLM rate limited", { retryable: true, status: 429 });
+  // Provider error bodies can include account identifiers; redact before they reach logs/UI.
+  const text = (await res.text()).replace(/\borg_[A-Za-z0-9]+/g, "org_[redacted]");
+  if (res.status === 429) {
+    // Prefer the Retry-After header; Groq also says "Please try again in 2.04s" in the body.
+    const header = Number(res.headers.get("retry-after"));
+    const m = text.match(/try again in\s+(?:(\d+)m)?([\d.]+)(ms|s)/i);
+    const fromBody = m ? (Number(m[1] || 0) * 60 + Number(m[2]) / (m[3] === "ms" ? 1000 : 1)) * 1000 : NaN;
+    const retryAfterMs = Number.isFinite(header) && header > 0 ? header * 1000 : Number.isFinite(fromBody) ? Math.ceil(fromBody) : undefined;
+    throw new LlmError("rate_limited", `LLM rate limited${retryAfterMs ? ` (retry in ${(retryAfterMs / 1000).toFixed(1)}s)` : ""}`, { retryable: true, status: 429, retryAfterMs });
+  }
   if (res.status >= 500) throw new LlmError("http", `LLM server error ${res.status}`, { retryable: true, status: res.status });
   if (!res.ok) throw new LlmError("http", `LLM request failed ${res.status}: ${text.slice(0, 200)}`, { status: res.status });
   try {
@@ -110,7 +121,7 @@ export function createLlmClient(config = llmConfigFromEnv()) {
 
   if (provider === "openai_compatible") {
     const headers = apiKey ? { authorization: `Bearer ${apiKey}` } : {};
-    const { fallbackModel, reasoningEffort } = config;
+    const { fallbackModel, reasoningEffort, fallbackReasoningEffort } = config;
 
     async function complete(modelId, messages, schema, extra) {
       const base = { model: modelId, messages, temperature: 0, max_tokens: maxTokens, ...extra };
@@ -145,7 +156,7 @@ export function createLlmClient(config = llmConfigFromEnv()) {
         } catch (e) {
           const fallbackWorthy = e.retryable || e.status === 404 || (e.status === 400 && /model/i.test(e.message));
           if (!fallbackModel || !fallbackWorthy) throw e;
-          const out = await complete(fallbackModel, messages, schema, {});
+          const out = await complete(fallbackModel, messages, schema, fallbackReasoningEffort ? { reasoning_effort: fallbackReasoningEffort } : {});
           return { ...out, fallbackFrom: { model, error: e.message } };
         }
       },

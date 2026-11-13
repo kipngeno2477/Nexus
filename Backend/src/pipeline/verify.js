@@ -5,7 +5,7 @@
 import { VERDICTS, evidenceTag } from "./prompt.js";
 import { tokenize } from "../retrieval/bm25.js";
 
-const MAX_CLAIMS = 6;
+const MAX_CLAIMS = 8;
 const MAX_CLAIM_CHARS = 500;
 const LOW_OVERLAP = 0.35;
 
@@ -57,6 +57,16 @@ function normaliseTags(list, validTags) {
   return { tags: out, invented };
 }
 
+// Numbers must come from the source: "21", "twenty-one", "500,000", "five hundred thousand"...
+const NUMBER_WORDS = "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty thirty forty fifty sixty seventy eighty ninety hundred thousand million".split(" ");
+const NUM_RE = new RegExp(`\\b(?:\\d[\\d,.]*|(?:${NUMBER_WORDS.join("|")})(?:[- ](?:${NUMBER_WORDS.join("|")}))*)\\b`, "gi");
+export function numbersNotInSource(claimText, supportText) {
+  const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); // "(1)", "500,000", "twenty-one" all normalise
+  const support = ` ${norm(supportText)} `;
+  const found = String(claimText).match(NUM_RE) ?? [];
+  return [...new Set(found.map(norm))].filter((n) => !support.includes(` ${n} `) && !support.includes(` ${n}`));
+}
+
 function overlap(claimText, supportText) {
   const claim = new Set(tokenize(claimText));
   if (claim.size === 0) return 1;
@@ -85,8 +95,21 @@ export function verifyCitations(parsed, chunks) {
       unsupported.push({ text, reason: "no valid citation" });
       continue;
     }
-    const ratio = overlap(text, tags.map((t) => tagToChunk.get(t).text).join(" "));
+    const support = tags.map((t) => tagToChunk.get(t).text).join(" ");
+    const ratio = overlap(text, support);
     const claim = { text, tags, overlap: +ratio.toFixed(2) };
+    // Numbers must come from the evidence. If a number is in another selected passage,
+    // complete the citation; if it is in none, flag the claim.
+    for (const n of numbersNotInSource(text, support)) {
+      const home = [...tagToChunk.entries()].find(([t, c]) => !claim.tags.includes(t) && numbersNotInSource(n, c.text).length === 0);
+      if (home) {
+        claim.tags.push(home[0]);
+        warnings.push({ code: "citation_completed", detail: `"${n}" comes from passage ${home[0].slice(1)}, which was added to the claim's citations.`, claim: text });
+      } else {
+        claim.lowOverlap = true;
+        warnings.push({ code: "number_not_in_source", detail: `"${n}" does not appear in any retrieved passage. Check the excerpt.`, claim: text });
+      }
+    }
     if (ratio < LOW_OVERLAP) {
       claim.lowOverlap = true;
       warnings.push({ code: "low_overlap", detail: "Claim wording differs strongly from its cited passage; check the excerpt.", claim: text });
