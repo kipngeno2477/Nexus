@@ -102,13 +102,14 @@ export function verifyCitations(parsed, chunks) {
       unsupported.push({ text, reason: "no valid citation" });
       continue;
     }
-    const support = tags.map((t) => tagToChunk.get(t).text).join(" ");
+    // The section title counts as source text: "section 9(1)" is supported by "9. Processing of application".
+    const support = tags.map((t) => `${tagToChunk.get(t).sectionTitle ?? ""} ${tagToChunk.get(t).text}`).join(" ");
     const ratio = overlap(text, support);
     const claim = { text, tags, overlap: +ratio.toFixed(2) };
     // Numbers must come from the evidence. If a number is in another selected passage,
     // complete the citation; if it is in none, flag the claim.
     for (const n of numbersNotInSource(text, support)) {
-      const home = [...tagToChunk.entries()].find(([t, c]) => !claim.tags.includes(t) && numbersNotInSource(n, c.text).length === 0);
+      const home = [...tagToChunk.entries()].find(([t, c]) => !claim.tags.includes(t) && numbersNotInSource(n, `${c.sectionTitle ?? ""} ${c.text}`).length === 0);
       if (home) {
         claim.tags.push(home[0]);
         warnings.push({ code: "citation_completed", detail: `"${n}" comes from passage ${home[0].slice(1)}, which was added to the claim's citations.`, claim: text });

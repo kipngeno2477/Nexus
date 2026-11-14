@@ -66,6 +66,31 @@ export default function App() {
   ])
 
   const abortRef = useRef(null)
+  const resultsRef = useRef(null)
+  const dockSentinelRef = useRef(null)
+  const [dockStuck, setDockStuck] = useState(false)
+
+  // The question box sticks to the top of the scroll area; show its backdrop only while stuck.
+  useEffect(() => {
+    const el = dockSentinelRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    // The huge bottom margin makes "below the screen" count as visible, so "not visible" means only
+    // "scrolled past the top", even when jumping straight from far below to far above.
+    const io = new IntersectionObserver(([e]) => setDockStuck(!e.isIntersecting), { rootMargin: '0px 0px 100000px 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  // When a question is sent (progress) and when its answer arrives, bring the response into view.
+  // The question box itself never moves: results render below it.
+  useEffect(() => {
+    if (!loading && !result) return
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    const id = requestAnimationFrame(() =>
+      resultsRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    )
+    return () => cancelAnimationFrame(id)
+  }, [loading, result])
   const elapsed = useElapsed(loading)
 
   const refreshHealth = useCallback(() => health().then(setH), [])
@@ -231,41 +256,24 @@ export default function App() {
         {/* Hero Section */}
         <HeroSection scopeText={scopeText} />
 
-        {/* Active Chat / Results Container */}
-        <ActiveChatCard
-          activeQuestion={activeQuestion}
-          loading={loading}
-          elapsed={elapsed}
-          result={result}
-          hasPipelineResult={hasPipelineResult}
-          citedRefs={citedRefs}
-          activeRef={activeRef}
-          onCite={onCite}
-          setPassage={setPassage}
-          showAllSources={showAllSources}
-          setShowAllSources={setShowAllSources}
-          showSourcesOnly={showSourcesOnly}
-          scopeTitle={result?.scope ? allDocs.find((d) => d.docId === result.scope)?.title ?? result.scope : null}
-          onSearchAll={() => {
-            setDocFilter('')
-            submit(activeQuestion, simulate, '')
-          }}
-        />
+        {/* Question box: stays where it is; sticks to the top while scrolling through long answers */}
+        <div ref={dockSentinelRef} className="prompt-dock-sentinel" aria-hidden="true" />
+        <div className={`prompt-dock ${dockStuck ? 'is-stuck' : ''}`}>
+          {/* Which documents the next question searches (visible, one click to change) */}
+          <ScopeSelector docs={safeDocs} myDocs={safeMyDocs} value={docFilter} onChange={setDocFilter} disabled={loading} />
 
-        {/* Which documents the next question searches (visible, one click to change) */}
-        <ScopeSelector docs={safeDocs} myDocs={safeMyDocs} value={docFilter} onChange={setDocFilter} disabled={loading} />
-
-        {/* Prompt Input Bar */}
-        <PromptInput
-          question={question}
-          setQuestion={setQuestion}
-          onSubmit={() => submit(question)}
-          onCancel={handleCancel}
-          loading={loading}
-          onOpenUpload={() => setUploadOpen(true)}
-          hasPrivateDocs={myDocs.length > 0}
-          maxChars={MAX_CHARS}
-        />
+          {/* Prompt Input Bar */}
+          <PromptInput
+            question={question}
+            setQuestion={setQuestion}
+            onSubmit={() => submit(question)}
+            onCancel={handleCancel}
+            loading={loading}
+            onOpenUpload={() => setUploadOpen(true)}
+            hasPrivateDocs={myDocs.length > 0}
+            maxChars={MAX_CHARS}
+          />
+        </div>
 
         {/* Try Asking Suggestions */}
         <TryAsking
@@ -275,6 +283,30 @@ export default function App() {
           }}
           disabled={loading}
         />
+
+        {/* Results render below the question box, so a growing answer never pushes the box down */}
+        <div ref={resultsRef} className="results-anchor">
+          {/* Active Chat / Results Container */}
+          <ActiveChatCard
+            activeQuestion={activeQuestion}
+            loading={loading}
+            elapsed={elapsed}
+            result={result}
+            hasPipelineResult={hasPipelineResult}
+            citedRefs={citedRefs}
+            activeRef={activeRef}
+            onCite={onCite}
+            setPassage={setPassage}
+            showAllSources={showAllSources}
+            setShowAllSources={setShowAllSources}
+            showSourcesOnly={showSourcesOnly}
+            scopeTitle={result?.scope ? allDocs.find((d) => d.docId === result.scope)?.title ?? result.scope : null}
+            onSearchAll={() => {
+              setDocFilter('')
+              submit(activeQuestion, simulate, '')
+            }}
+          />
+        </div>
       </main>
 
       {/* Modals and Drawers */}

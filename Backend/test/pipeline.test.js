@@ -254,3 +254,11 @@ test("missing verdict is inferred from content instead of discarding the answer"
   const r3 = await run({ question: "trading licence", k: 1 }, mockLlm({ verdict: "maybe", claims: [] }, { verdict: "maybe", claims: [] }));
   assert.equal(r3.status, "model_unavailable", "an unknown verdict value is still a format error");
 });
+
+test("a section number in a claim is supported by the cited passage's section title", async () => {
+  const llm = mockLlm({ verdict: "answered", claims: [{ text: "Under section 1, a trading licence is required.", evidence: ["E1"] }], missing: "", conflicts: [] });
+  const r = await run({ question: "trading licence public place", k: 1 }, llm);
+  assert.equal(r.citations[0].sectionTitle, "SECTION 1 Trading licences");
+  assert.ok(!r.warnings.some((w) => w.code === "number_not_in_source"), JSON.stringify(r.warnings));
+  assert.equal(r.answer[0].lowOverlap, false);
+});
