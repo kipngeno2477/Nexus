@@ -54,8 +54,10 @@ html, body {
    ========================================================================== */
 
 .nexus-layout {
+  /* App shell: exactly one screen tall. The sidebar stays put; only .nexus-main scrolls. */
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh; /* mobile browsers: excludes the collapsing address bar */
   width: 100%;
   background:
     radial-gradient(circle at 10% 15%, rgba(14, 116, 144, 0.12) 0%, transparent 45%),
@@ -63,7 +65,7 @@ html, body {
     radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
     var(--bg-dark);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* ==========================================================================
@@ -78,9 +80,8 @@ html, body {
   display: flex;
   flex-direction: column;
   padding: 24px 18px 20px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  height: 100%;
+  overflow-y: auto; /* only if the window is shorter than the sidebar itself */
   z-index: 40;
 }
 
@@ -315,13 +316,17 @@ html, body {
    ========================================================================== */
 
 .nexus-main {
+  /* The scroll container. It spans the full remaining width so the scrollbar sits at the window
+     edge; the content keeps its original 1152px column via the horizontal padding. */
   flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
-  padding: 24px 44px 48px;
-  max-width: 1240px;
-  margin: 0 auto;
-  width: 100%;
+  padding: 24px max(44px, calc((100% - 1152px) / 2)) 48px;
 }
 
 /* Top Navigation */
@@ -1385,17 +1390,24 @@ html, body {
    ========================================================================== */
 
 @media (max-width: 980px) {
+  /* Narrow screens: the sidebar stacks on top, so use normal page scrolling instead of a fixed shell. */
   .nexus-layout {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
   .nexus-sidebar {
     width: 100%;
     height: auto;
+    overflow: visible;
     position: relative;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
   .nexus-main {
+    height: auto;
+    overflow: visible;
     padding: 20px 16px;
   }
   .nexus-hero-section {
