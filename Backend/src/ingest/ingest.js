@@ -52,7 +52,7 @@ export async function ingestDirectory(dir = RAW_DIR, sourcesFile = SOURCES_FILE)
   const chunks = [];
   const docs = [];
   for (const f of files) {
-    const { docId, title, sourceUrl } = sources[f] ?? {};
+    const { docId, title, sourceUrl, sourceFormat, originalName, pages } = sources[f] ?? {};
     const { chunks: docChunks, report, docTitle, docId: id } = ingestWithReport({
       fileName: f,
       raw: await readFile(path.join(dir, f), "utf8"),
@@ -61,7 +61,7 @@ export async function ingestDirectory(dir = RAW_DIR, sourcesFile = SOURCES_FILE)
       sourceUrl: sourceUrl || undefined,
     });
     if (docs.some((d) => d.docId === id)) throw new Error(`Duplicate docId "${id}" for ${f}`);
-    docs.push({ docId: id, title: docTitle, file: f, sourceUrl: sourceUrl || null, chunks: docChunks.length, ingest: report });
+    docs.push({ docId: id, title: docTitle, file: f, ...(sourceFormat ? { sourceFormat, originalName, pages } : {}), sourceUrl: sourceUrl || null, chunks: docChunks.length, ingest: report });
     chunks.push(...docChunks);
   }
   return { docs, chunks };

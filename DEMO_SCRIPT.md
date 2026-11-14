@@ -47,17 +47,17 @@ in the details panel, 2 attempts and their errors.
 failing." (Optional: **Simulate → search outage** shows "Search failed".)
 
 ### 2:25 – 2:55 · Messy document ingestion *(ingest noisy documents)*
-**Do:** set Simulate back to *nothing*. Under **Your documents**, click **＋ Upload .txt** and
-pick the noisy file. Open **Report**.
-**Show:** page numbers and running headers removed, hyphenation repaired, sections found;
-**Search in** switches to the new document. Ask a question about it and show the citation tagged
+**Do:** set Simulate back to *nothing* (Settings). Click the **paperclip** in the question bar and
+pick the noisy file, or a real county bylaw **PDF**.
+**Show:** the confirmation (sections found; for a PDF, pages read and running headers/footers
+removed). The **Search in** bar above the question box switches to the new document. Ask a question about it and show the citation tagged
 "your document".
 **Say:** "Citizens can bring their own bylaw. It's cleaned, split into sections and searched
 privately: it isn't shared, isn't stored, and is deleted after an hour."
 
 ### 2:55 – 3:05 · Close
 **Show:** the Knowledge base drawer (the Act with its ingestion report) or `EVALUATION.md`.
-**Say:** "27-question evaluation, 71 automated tests, deployed on PrimeCloud."
+**Say:** "27-question evaluation, 74 automated tests, deployed on PrimeCloud."
 
 ---
 

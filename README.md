@@ -7,7 +7,7 @@ statement comes from. If the documents don't cover a question, it says so instea
 - **SDG 16:** turning legal text into something a citizen can query
 - **Knowledge base:** Access to Information Act, 2016 (Kenya); see [SOURCES.md](SOURCES.md)
 - **Run it on your computer:** [SETUP.md](SETUP.md)
-- **Bring your own document:** citizens can upload or paste a bylaw, notice or charter (`.txt`), privately, and ask about it
+- **Bring your own document:** citizens can upload a **PDF**, `.txt` or `.md` (or paste text), privately, and ask about it
 - **Results:** see [EVALUATION.md](EVALUATION.md)
 
 **Results** (27-question evaluation on Groq `qwen3.8-27b`; details in [EVALUATION.md](EVALUATION.md)):
@@ -191,7 +191,7 @@ Backend/
   src/askGuard.js              per-client rate limit + answer cache
   src/eval/                    questions.json, runEval.js, benchmark.js, ask-cli.js
   controllers/, routes/        HTTP layer
-  test/                        node:test suites (71 tests)
+  test/                        node:test suites (74 tests)
   eval-results/                run1-baseline, run2, run3 (final) and latest evaluation outputs
 Frontend/                      React + Vite (no UI libraries)
   src/App.jsx                  ask form, results, document filter
@@ -238,7 +238,7 @@ Terminal Q&A without the UI: `npm run ask -- "How much does it cost to request i
 
 ```bash
 cd Backend
-npm test                            # 71 unit/integration tests, no network needed
+npm test                            # 74 unit/integration tests, no network needed
 npm run bench                       # heap vs full-sort timings
 npm run eval -- --retrieval-only    # Recall@K, MRR, heap == sort on real queries (no model calls)
 npm run eval                        # full run on the configured model + failure scenarios (~6 min on Groq free tier)
@@ -293,7 +293,7 @@ dependencies → `node:22-alpine`, non-root user).
    - [ ] Passages (K) = 0 → "Check your question"
    - [ ] Simulate → model outage → "Answer generator unavailable" + source passages
    - [ ] "How this answer was produced" shows the workflow trace and heap top-K table
-   - [ ] Upload a `.txt` under "Your documents" and ask about it
+   - [ ] Paperclip → upload a PDF (selectable text) or `.txt` and ask about it; a scanned PDF is rejected with a clear message
 6. **Exit code 137 (out of memory):** add RAM and raise `NODE_OPTIONS=--max-old-space-size`
    (the image sets 384 MB for a 512 MiB container).
 
@@ -343,7 +343,9 @@ Local image test, if you have Docker access: `docker build -t nexus . && docker 
   typos (e.g. "how mch does it cst"); there are no embeddings.
 - **The synonym map is tuned to the Access to Information Act.** Other documents rely on plain
   keyword and stem matching.
-- **Plain text only:** no OCR or PDF parsing. Documents without recognisable headings are split
+- **PDFs need selectable text:** PDFs are converted to text in the browser (pdf.js, with running
+  headers/footers removed by page position); scanned, image-only PDFs are rejected (no OCR). Tables
+  and multi-column layouts may lose their structure. Documents without recognisable headings are split
   by length, so their citations point to chunks rather than sections (the ingestion report says so).
 - **Conflict detection depends on the model** noticing the disagreement, backed by the number check.
 - **Groq free tier:** 1,000 output tokens per minute for `qwen3.8-27b` (about 4–6 answers a

@@ -67,3 +67,11 @@ test("BM25 returns no candidates for unrelated query", () => {
   const index = new BM25Index(ingestText({ fileName: "sample.txt", raw: NOISY }));
   assert.equal(index.score("spaceship parking fines").candidates.length, 0);
 });
+
+test("Part heading wrapped onto an ALL-CAPS second line is rejoined (PDF layout)", () => {
+  const raw = ["Part V - CONFERMENT ON THE COMMISSION OF OVERSIGHT AND ENFORCEMENT", "FUNCTIONS AND POWERS", "20. Role of the Commission", "The Commission is granted oversight powers."].join("\n");
+  const chunks = ingestText({ fileName: "p.txt", raw });
+  assert.equal(chunks.length, 1);
+  assert.equal(chunks[0].part, "Part V - CONFERMENT ON THE COMMISSION OF OVERSIGHT AND ENFORCEMENT FUNCTIONS AND POWERS");
+  assert.equal(chunks[0].sectionId, "s20");
+});

@@ -7,6 +7,7 @@
 import { randomUUID } from "node:crypto";
 import { ingestWithReport } from "./ingest/ingest.js";
 import { slug } from "./ingest/chunk.js";
+import { sourceInfo } from "./ingest/sourceInfo.js";
 import { BM25Index } from "./retrieval/bm25.js";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
@@ -71,7 +72,8 @@ export class SessionStore {
   }
 
   /** Adds a private document. Creates a session if `id` is missing/expired. */
-  addDocument(id, { fileName, text, title }) {
+  addDocument(id, { fileName, text, title, ...origin }) {
+    const source = sourceInfo(origin); // validates sourceFormat / originalName / pages (400 on bad input)
     const base = String(fileName ?? "").split(/[\\/]/).pop().trim();
     if (!/^[\w .()-]{1,100}\.(txt|md)$/i.test(base)) throw httpError(400, "fileName must be a .txt or .md file name (letters, digits, spaces, . _ - ( ) only)");
     if (typeof text !== "string" || !text.trim()) throw httpError(400, "text is required");
@@ -92,7 +94,7 @@ export class SessionStore {
     if (chunks.length === 0) throw httpError(422, "No usable text found after cleaning");
     for (const c of chunks) c.private = true;
 
-    const doc = { docId: finalId, title: docTitle, file: base, chunks: chunks.length, private: true, ingest: report, addedAt: new Date(this.now()).toISOString() };
+    const doc = { docId: finalId, title: docTitle, file: base, ...source, chunks: chunks.length, private: true, ingest: report, addedAt: new Date(this.now()).toISOString() };
     s.docs.push(doc);
     s.chunks.push(...chunks);
     s.index = null; // rebuilt lazily

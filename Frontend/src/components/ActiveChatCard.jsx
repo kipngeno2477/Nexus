@@ -18,6 +18,8 @@ export default function ActiveChatCard({
   showAllSources,
   setShowAllSources,
   showSourcesOnly,
+  scopeTitle,
+  onSearchAll,
 }) {
   const displayQuestion =
     activeQuestion || (result ? result.question : 'Am I protected if I disclose information about corruption?')
@@ -62,6 +64,18 @@ export default function ActiveChatCard({
             status={result.status}
             message={result.status === 'answered' ? null : result.message}
           />
+
+          {/* The search was limited to one document and found nothing: offer to widen it */}
+          {scopeTitle && result.status === 'insufficient_evidence' && (
+            <div className="scope-hint" role="note">
+              <span>
+                This search only looked in <strong>{scopeTitle}</strong>.
+              </span>
+              <button type="button" className="scope-hint-btn" onClick={onSearchAll}>
+                Search all documents instead
+              </button>
+            </div>
+          )}
 
           {hasPipelineResult && result.status !== 'invalid_input' && (
             <div className="answer-section">

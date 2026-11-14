@@ -188,3 +188,14 @@ test("docIds filter restricts retrieval to the chosen documents", async () => {
     assert.equal(r.status, "invalid_input", JSON.stringify(docIds).slice(0, 30));
   }
 });
+
+test("shared upload keeps PDF-origin metadata across a restart", async () => {
+  const { doc } = await kb.addDocument({ fileName: "roads.txt", text: "SECTION 1 Roads\nRoads are maintained by the county.", sourceFormat: "pdf", originalName: "Roads Act.pdf", pages: 2 });
+  assert.equal(doc.sourceFormat, "pdf");
+  const fresh = new KnowledgeBase({ rawDir: path.join(dir, "raw"), uploadDir: path.join(dir, "uploads") });
+  await fresh.load();
+  const again = fresh.docs.find((d) => d.docId === "roads");
+  assert.equal(again.sourceFormat, "pdf");
+  assert.equal(again.originalName, "Roads Act.pdf");
+  await assert.rejects(kb.addDocument({ fileName: "x.txt", text: "SECTION 1 A\nb", sourceFormat: "exe" }), (e) => e.status === 400);
+});

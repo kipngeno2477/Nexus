@@ -1,10 +1,15 @@
 // Thin wrapper around the backend API. Every call resolves to { ok, status, data } —
 // network failures are reported, never thrown, so the UI can always show a state.
 
+// Backend location, in priority order:
+//   1. window.__NEXUS_API_URL__ (injected at runtime by the static server)
+//   2. VITE_API_BASE_URL (set at build time)
+//   3. dev server (npm run dev): same origin, so Vite's /api proxy reaches the LOCAL backend
+//   4. production build: the deployed backend
 const API_BASE = (
   typeof window !== 'undefined' && window.__NEXUS_API_URL__
     ? window.__NEXUS_API_URL__
-    : import.meta.env?.VITE_API_BASE_URL || 'https://backend.primecloud.cloud'
+    : import.meta.env?.VITE_API_BASE_URL || (import.meta.env?.DEV ? '' : 'https://backend.primecloud.cloud')
 ).replace(/\/+$/, '')
 
 // Private-document session id (issued by the server on first private upload).

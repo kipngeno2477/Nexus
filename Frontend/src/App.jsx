@@ -12,6 +12,7 @@ import SettingsModal from './components/SettingsModal.jsx'
 import AboutModal from './components/AboutModal.jsx'
 import HistoryModal from './components/HistoryModal.jsx'
 import UploadModal from './components/UploadModal.jsx'
+import ScopeSelector from './components/ScopeSelector.jsx'
 
 const MAX_CHARS = 500
 
@@ -108,7 +109,8 @@ export default function App() {
     return () => clearTimeout(id)
   }, [])
 
-  async function submit(q = question, sim = simulate) {
+  // scope: '' = all documents, otherwise one docId. Defaults to the visible "Search in" choice.
+  async function submit(q = question, sim = simulate, scope = docFilter) {
     const text = q.trim()
     if (!text || loading) return
     abortRef.current?.abort()
@@ -143,7 +145,7 @@ export default function App() {
         question: text,
         k: Number(k),
         simulate: sim || undefined,
-        docIds: docFilter ? [docFilter] : undefined,
+        docIds: scope ? [scope] : undefined,
       },
       ac.signal
     )
@@ -152,7 +154,7 @@ export default function App() {
     setLoading(false)
     setResult(
       r.data && 'status' in r.data
-        ? r.data
+        ? { ...r.data, scope: scope || null } // remember which documents this answer searched
         : { status: 'network_error', message: r.data?.message ?? 'Unexpected response' }
     )
     if (r.data?.status === 'model_unavailable' || r.data?.status === 'retrieval_error') refreshHealth()
@@ -243,7 +245,15 @@ export default function App() {
           showAllSources={showAllSources}
           setShowAllSources={setShowAllSources}
           showSourcesOnly={showSourcesOnly}
+          scopeTitle={result?.scope ? allDocs.find((d) => d.docId === result.scope)?.title ?? result.scope : null}
+          onSearchAll={() => {
+            setDocFilter('')
+            submit(activeQuestion, simulate, '')
+          }}
         />
+
+        {/* Which documents the next question searches (visible, one click to change) */}
+        <ScopeSelector docs={safeDocs} myDocs={safeMyDocs} value={docFilter} onChange={setDocFilter} disabled={loading} />
 
         {/* Prompt Input Bar */}
         <PromptInput

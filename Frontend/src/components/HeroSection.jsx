@@ -10,8 +10,8 @@ export default function HeroSection({ scopeText }) {
           law in <span className="highlight-text">plain language</span>
         </h2>
         <p className="hero-description">
-          Access accurate information from the Access to Information Act, 2016 (Kenya).
-          Every statement links to the section in the Act. If the documents don't cover your question,
+          Answers come only from {scopeText || 'the Access to Information Act, 2016 (Kenya)'}. Every
+          statement links to the section it came from. If the documents don't cover your question,
           Nexus says so instead of guessing.
         </p>
       </div>

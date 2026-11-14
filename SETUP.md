@@ -213,9 +213,11 @@ one terminal. After changing frontend code, run `npm run build` again.
    *12. Fees*.
 4. **Check that it refuses off-topic questions:** ask *"How do I get a passport?"*. You should see an
    amber **"Not enough evidence"** banner, and no made-up answer.
-5. **Upload your own document:** under **Your documents**, click **＋ Upload .txt**, choose any
-   plain-text file, and ask a question about it. Only you can see uploaded documents, and they are
-   deleted after an hour.
+5. **Upload your own document:** click the **paperclip** in the question bar, choose a PDF (with
+   selectable text), `.txt` or `.md` file, then ask about it. PDFs are converted to text in your
+   browser. The **Search in** bar above the question box switches to your document; set it to
+   *All documents* to search everything. Only you can see uploaded documents, and they are deleted
+   after an hour.
 6. **See how it works:** expand **"How this answer was produced"** to see the workflow steps and
    the top-K passages picked by the heap.
 
@@ -232,7 +234,7 @@ npm run ask -- "Who can I complain to if my request is refused?"
 From `Nexus/Backend`:
 
 ```bash
-npm test                            # 71 automated tests, about 10 seconds, no internet needed
+npm test                            # 74 automated tests, about 10 seconds, no internet needed
 npm run bench                       # heap vs full-sort speed comparison
 npm run eval -- --retrieval-only    # search-quality metrics, no AI calls
 npm run eval                        # full 27-question evaluation (Groq: about 6 minutes; uses quota)
@@ -274,7 +276,9 @@ the numbers mean.
 | Answers take about a minute | Ollama running on the CPU | Expected. Use Groq for speed, or keep using Ollama for offline work |
 | Changes to `.env` have no effect | The backend reads `.env` only when it starts | Stop it (`Ctrl + C`) and start it again |
 | `npm install` fails behind a company or campus proxy | Network restrictions | Run `npm config set proxy http://your-proxy:port` (and `https-proxy`), or use another network |
-| Uploaded document says "No usable text" or "must be a .txt or .md file" | Only plain text is supported | Save the document as `.txt` first (in Word: *Save As → Plain Text*). PDFs and scans are not supported |
+| "No selectable text found… scanned PDF" | The PDF is a scan (images only); there is no OCR | Use a PDF with selectable text (you can highlight words in it), or paste the text |
+| "Please choose a .pdf, .txt or .md file" | Word, images and other formats aren't supported | In Word: *Save As → PDF* or *Plain Text* |
+| "This PDF is password-protected" | Encrypted PDF | Remove the password (e.g. print to a new PDF) and try again |
 
 Still stuck? Run `npm test` in `Backend/`. If the tests pass, the code is fine, and the problem is
 the `.env` settings or the network.

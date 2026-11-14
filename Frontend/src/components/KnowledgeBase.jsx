@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { listDocuments, listChunks, uploadDocument, deleteDocument } from '../api.js'
 import IngestReport from './IngestReport.jsx'
+import { readDocumentFile, ACCEPT, DocumentFileError } from '../documentFile.js'
 
 const TOKEN_KEY = 'nexus-upload-token'
 function readToken() {
@@ -209,15 +210,31 @@ function UploadForm({ token, onUploaded }) {
   const [msg, setMsg] = useState(null)
   const [report, setReport] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [origin, setOrigin] = useState({}) // { sourceFormat, originalName, pages } of the picked file
 
   async function onFile(e) {
     const f = e.target.files?.[0]
     if (!f) return
-    if (f.size > 900_000) return setMsg({ bad: true, text: 'File is too large (max ~900 KB).' })
-    setFileName(f.name.replace(/[^\w .()-]/g, '_'))
-    setText(await f.text())
     setMsg(null)
     setReport(null)
+    setBusy(true)
+    try {
+      // PDFs are converted in the browser; the extracted text appears below for review before ingesting.
+      const { fileName: name, text: body, title: pdfTitle, ...meta } = await readDocumentFile(f, {
+        maxTextChars: 900_000,
+        onProgress: ({ page, pages }) => setMsg({ bad: false, text: `Reading PDF… page ${page} of ${pages}` }),
+      })
+      setFileName(name)
+      setText(body)
+      setOrigin(meta)
+      if (pdfTitle) setTitle((t) => t || pdfTitle)
+      setMsg(meta.sourceFormat === 'pdf' ? { bad: false, text: `Extracted text from ${meta.pages} PDF pages. Review it below, then ingest.` } : null)
+    } catch (err) {
+      if (!(err instanceof DocumentFileError)) console.error('readDocumentFile failed:', err)
+      setMsg({ bad: true, text: err instanceof DocumentFileError ? err.message : 'Could not read this file.' })
+    } finally {
+      setBusy(false)
+    }
   }
 
   async function submit(e) {
@@ -225,7 +242,7 @@ function UploadForm({ token, onUploaded }) {
     setBusy(true)
     setMsg(null)
     setReport(null)
-    const r = await uploadDocument({ fileName, title: title.trim() || undefined, text }, token)
+    const r = await uploadDocument({ fileName, title: title.trim() || undefined, text, ...origin }, token)
     setBusy(false)
     if (r.ok) {
       setMsg({ bad: false, text: `Successfully indexed “${r.data.doc.title}”. Ready for retrieval.` })
@@ -233,6 +250,7 @@ function UploadForm({ token, onUploaded }) {
       setFileName('')
       setTitle('')
       setText('')
+      setOrigin({})
       onUploaded()
     } else {
       setMsg({ bad: true, text: r.data?.message ?? 'Upload failed' })
@@ -246,15 +264,17 @@ function UploadForm({ token, onUploaded }) {
         <h4 className="kb-upload-title">Ingest Additional Statutory Document</h4>
       </div>
       <p className="kb-muted-text">
-        Upload plain text (.txt or .md) up to ~900 KB. The pipeline automatically strips running
+        Upload a PDF (with selectable text, up to 15 MB) or plain text (.txt or .md, up to ~900 KB).
+        PDFs are converted to text in your browser. The pipeline automatically strips running
         headers, repairs broken line breaks, and splits sections into bounded chunks.
       </p>
 
       <div className="kb-upload-fields">
         <input
           type="file"
-          accept=".txt,.md,text/plain,text/markdown"
+          accept={ACCEPT}
           onChange={onFile}
+          disabled={busy}
           className="kb-file-input"
         />
         <div className="kb-input-grid">

@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ingestDirectory, ingestWithReport, RAW_DIR } from "./ingest/ingest.js";
 import { BM25Index } from "./retrieval/bm25.js";
+import { sourceInfo } from "./ingest/sourceInfo.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(ROOT, "data/uploads");
@@ -106,7 +107,8 @@ export class KnowledgeBase {
    * Adds an uploaded plain-text document. The original text is stored unmodified in the
    * upload folder; cleaning/chunking happen in memory. Returns the doc and an ingestion report.
    */
-  async addDocument({ fileName, text, title }) {
+  async addDocument({ fileName, text, title, ...origin }) {
+    const source = sourceInfo(origin);
     const base = path.basename(String(fileName || "")).trim();
     if (!/^[\w .()-]{1,100}\.(txt|md)$/i.test(base)) throw httpError(400, "fileName must be a .txt or .md file name (letters, digits, spaces, . _ - ( ) only)");
     if (typeof text !== "string" || !text.trim()) throw httpError(400, "text is required");
@@ -125,10 +127,10 @@ export class KnowledgeBase {
       throw e;
     });
     const manifest = await this.#readManifest();
-    manifest[base] = { docId, title: docTitle, uploadedAt: new Date().toISOString() };
+    manifest[base] = { docId, title: docTitle, ...source, uploadedAt: new Date().toISOString() };
     await writeFile(this.manifestFile, JSON.stringify(manifest, null, 2));
 
-    const doc = { docId, title: docTitle, file: base, sourceUrl: null, chunks: chunks.length, uploaded: true, ingest: report };
+    const doc = { docId, title: docTitle, file: base, ...source, sourceUrl: null, chunks: chunks.length, uploaded: true, ingest: report };
     this.docs.push(doc);
     this.chunks.push(...chunks);
     this.rebuild();

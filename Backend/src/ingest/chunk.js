@@ -15,6 +15,10 @@ function sectionIdFrom(title, index) {
   return m ? `s${m[1].toLowerCase()}` : `s${index}`;
 }
 
+function isCapsContinuation(line) {
+  return !!line && line.length <= 100 && /[A-Z]/.test(line) && !/[a-z]/.test(line) && !isHeading(line) && !isPartHeading(line);
+}
+
 /** Groups lines into sections; text before the first heading becomes "preamble". */
 export function splitSections(cleaned) {
   const sections = [];
@@ -24,6 +28,13 @@ export function splitSections(cleaned) {
     if (current.lines.join(" ").trim()) sections.push(current);
   };
   for (const line of cleaned.split("\n")) {
+    // A long Part heading wrapped onto a second ALL-CAPS line (common in PDFs) continues the heading.
+    if (current.partIntro && current.lines.length === 0 && isCapsContinuation(line)) {
+      current.title = `${current.title} ${line}`;
+      part = current.title;
+      current.part = part;
+      continue;
+    }
     if (isPartHeading(line)) {
       flush();
       part = line;

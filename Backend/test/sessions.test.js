@@ -128,3 +128,16 @@ test("pipeline over a session: citations flag private sources; docIds can target
   assert.equal(r.citations[0].private, true);
   assert.ok(r.evidence.every((e) => e.docId === "my-waste"));
 });
+
+test("PDF-origin metadata is validated and kept on private documents", () => {
+  const { s } = store();
+  const out = s.addDocument(null, { fileName: "waste.txt", text: WASTE, sourceFormat: "pdf", originalName: "C:\\docs\\Waste Bylaw.pdf", pages: 3 });
+  assert.equal(out.doc.sourceFormat, "pdf");
+  assert.equal(out.doc.originalName, "Waste Bylaw.pdf", "path stripped");
+  assert.equal(out.doc.pages, 3);
+  const plain = s.addDocument(out.sessionId, { fileName: "other.txt", text: "SECTION 1 Water\nWater is supplied daily." });
+  assert.equal(plain.doc.sourceFormat, "text", "defaults to text");
+  for (const bad of [{ sourceFormat: "docx" }, { pages: 0 }, { pages: 2.5 }, { originalName: "x".repeat(201) }]) {
+    assert.throws(() => s.addDocument(null, { fileName: "b.txt", text: "SECTION 1 A\nwords here", ...bad }), (e) => e.status === 400, JSON.stringify(bad).slice(0, 30));
+  }
+});
